@@ -1,2 +1,0 @@
-# hearts
-esplosione del cuore
