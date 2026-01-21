@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caduta di Diamanti e Anelli</title>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    background: transparent; /* sfondo trasparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .falling {
+    position: absolute;
+    font-size: 2rem;
+    animation-name: fall;
+    animation-duration: 5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  @keyframes fall {
+    0% {
+      transform: translateY(-10%) rotate(0deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(110vh) rotate(360deg);
+      opacity: 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<script>
+  const icons = ['💎','💍'];
+  const count = 30; // numero di elementi che cadono
+
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement('div');
+    el.className = 'falling';
+    el.textContent = icons[Math.floor(Math.random() * icons.length)];
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.fontSize = 16 + Math.random() * 32 + 'px';
+    el.style.animationDuration = 3 + Math.random() * 5 + 's';
+    el.style.animationDelay = Math.random() * 5 + 's';
+    document.body.appendChild(el);
+  }
+</script>
+
+</body>
+</html>
