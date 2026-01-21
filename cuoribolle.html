@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Cuori e Bolle Fluttuanti</title>
+<style>
+    body {
+        margin: 0;
+        overflow: hidden;
+        background: ;
+        height: 100vh;
+    }
+
+    .float {
+        position: absolute;
+        bottom: -50px;
+        animation: rise linear infinite;
+        opacity: 0.8;
+    }
+
+    .heart {
+        color: pink;
+        font-size: 24px;
+    }
+
+    .bubble {
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(173, 216, 230, 0.8);
+        border-radius: 50%;
+    }
+
+    @keyframes rise {
+        0% {
+            transform: translateY(0) scale(0.8);
+            opacity: 0;
+        }
+        10% {
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(-110vh) scale(1.2);
+            opacity: 0;
+        }
+    }
+</style>
+</head>
+<body>
+
+<script>
+function createElement(type) {
+    const el = document.createElement("div");
+    el.classList.add("float");
+
+    if (type === "heart") {
+        el.classList.add("heart");
+        el.innerHTML = "❤️";
+        el.style.fontSize = Math.random() * 20 + 20 + "px";
+    } else {
+        el.classList.add("bubble");
+        const size = Math.random() * 20 + 10;
+        el.style.width = size + "px";
+        el.style.height = size + "px";
+    }
+
+    el.style.left = Math.random() * 100 + "vw";
+    el.style.animationDuration = Math.random() * 5 + 5 + "s";
+
+    document.body.appendChild(el);
+
+    setTimeout(() => el.remove(), 10000);
+}
+
+// ciclo infinito
+setInterval(() => createElement("heart"), 500);
+setInterval(() => createElement("bubble"), 700);
+</script>
+
+</body>
+</html>
