@@ -1,0 +1,352 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Radar Player Gold – Glow Rosso Ottimizzato</title>
+
+<style>
+body{
+  background:linear-gradient(135deg,#fff8dc,#e6c97a);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  margin:0;
+  font-family:Arial,sans-serif;
+}
+
+.neon-box{
+  position:relative;
+  width:400px;
+  padding:20px;
+  border-radius:20px;
+  overflow:hidden;
+  border:2px solid gold;
+  box-shadow:
+    0 0 12px gold,
+    0 0 25px rgba(255,215,0,.9),
+    0 0 45px rgba(218,165,32,.9);
+}
+
+/* ================= TESTI GLOW ROSSO + GOLD ================= */
+.txt{
+  color:#fff;
+  font-weight:bold;
+  text-shadow:
+    0 0 4px #ff0000,
+    0 0 8px #ff0000,
+    0 0 12px gold,
+    0 0 20px rgba(218,165,32,0.8);
+}
+/* ========================================================== */
+
+/* ================= ORBITA ================= */
+.float-img{
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:90px;
+  height:90px;
+  margin:-45px;
+  background:url("https://xatimg.com/image/iZ7j2zxhABKB.png") center/contain no-repeat;
+  z-index:50;
+  pointer-events:none;
+  filter:
+    drop-shadow(0 0 8px gold)
+    drop-shadow(0 0 18px gold)
+    drop-shadow(0 0 32px rgba(218,165,32,1));
+  animation:
+    orbita 10s linear infinite,
+    caos 4.5s ease-in-out infinite alternate;
+}
+
+@keyframes orbita{
+  from{transform:rotate(0deg) translateX(155px) translateY(70px);}
+  to  {transform:rotate(360deg) translateX(155px) translateY(70px);}
+}
+@keyframes caos{
+  0%{scale:1}
+  30%{scale:.92}
+  60%{scale:1.08}
+  100%{scale:1}
+}
+/* ========================================== */
+
+/* ANNUNCIO */
+.annuncio-video{
+  position:absolute;
+  top:10px;
+  left:10px;
+  width:70px;
+  height:70px;
+  border-radius:50%;
+  overflow:hidden;
+  border:2px solid gold;
+  box-shadow:
+    0 0 10px gold,
+    0 0 22px rgba(255,215,0,.9),
+    0 0 40px rgba(218,165,32,.9);
+  z-index:20;
+}
+.annuncio-video video{width:100%;height:100%;object-fit:cover}
+
+/* RADAR */
+.radar{
+  width:300px;
+  height:300px;
+  margin:auto;
+  border-radius:50%;
+  overflow:hidden;
+  position:relative;
+  border:2px solid gold;
+  box-shadow:
+    inset 0 0 15px gold,
+    0 0 25px gold,
+    0 0 45px rgba(218,165,32,1);
+}
+
+/* MP4 */
+.video-center{position:absolute;inset:0}
+.video-center video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:50%;
+}
+
+/* COVER */
+.cover-center{
+  position:absolute;
+  width: 290px;
+  height: 290px;
+  border-radius:50%;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background-size:cover;
+  background-position:center;
+  border:2px solid gold;
+  box-shadow:
+    inset 0 0 15px gold,
+    0 0 30px gold,
+    0 0 55px rgba(218,165,32,1);
+  z-index:5;
+}
+
+/* DATA */
+.datetime{
+  position:absolute;
+  bottom:55px;
+  width:100%;
+  text-align:center;
+  font-size:13px;
+  z-index:10;
+}
+
+/* CONTROLLI */
+.controls-right{
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+}
+.controls-right button{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  background:transparent;
+  border:2px solid gold;
+  color:#fff;
+  box-shadow:
+    0 0 10px gold,
+    0 0 22px rgba(255,215,0,.9),
+    0 0 40px rgba(218,165,32,1);
+  cursor:pointer;
+}
+.controls-right input[type=range]{
+  writing-mode:bt-lr;
+  -webkit-appearance:slider-vertical;
+  width:6px;
+  height:70px;
+  filter:drop-shadow(0 0 12px gold);
+}
+
+/* TRACK */
+.track-scroller{
+  width:290px;
+  margin:10px auto 0;
+  padding:6px;
+  text-align:center;
+  border:2px solid gold;
+  border-radius:6px;
+  background:rgba(0,0,0,.35);
+  box-shadow:
+    inset 0 0 10px gold,
+    0 0 22px gold,
+    0 0 40px rgba(218,165,32,1);
+}
+
+/* LIVE */
+.live-box{
+  position:absolute;
+  top:10px;
+  right:10px;
+  display:flex;
+  gap:6px;
+  align-items:center;
+}
+
+/* ASCOLTI */
+.ascolti-box{
+  position:absolute;
+  bottom:10px;
+  left:10px;
+  padding:6px 10px;
+  font-size:14px;
+  font-weight:bold;
+  color:#fff;
+  text-shadow:
+    0 0 4px #ff0000,
+    0 0 8px #ff0000,
+    0 0 12px gold,
+    0 0 20px rgba(218,165,32,0.8);
+  border:2px solid gold;
+  border-radius:4px;
+  background:rgba(0,0,0,.35);
+  box-shadow:
+    inset 0 0 10px gold,
+    0 0 22px gold,
+    0 0 40px rgba(218,165,32,1);
+}
+</style>
+</head>
+
+<body>
+
+<div class="neon-box">
+
+  <div class="float-img"></div>
+
+  <div class="annuncio-video">
+    <video id="annuncioVideo" playsinline>
+      <source src="https://jaguaronero.github.io/hearts/ferny26.mp4">
+    </video>
+  </div>
+
+  <div class="radar">
+    <div class="video-center">
+      <video autoplay muted loop playsinline>
+        <source src="https://jaguaronero.github.io/hearts/ladj.mp4">
+      </video>
+    </div>
+    <div class="cover-center" id="cover"></div>
+    <div class="datetime txt" id="datetime"></div>
+  </div>
+
+  <div class="controls-right">
+    <button id="playButton">▶</button>
+    <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5">
+    <button id="stopButton">⏹</button>
+  </div>
+
+  <div class="track-scroller txt" id="track">Tocca PLAY</div>
+
+  <div class="live-box">
+    <div class="txt">LIVE</div>
+    <img src="https://xatimg.com/image/PDOMxXfzIdCv.gif" width="36">
+  </div>
+
+  <div class="ascolti-box txt" id="ascolti">0</div>
+
+</div>
+
+<audio id="audio" crossorigin="anonymous"></audio>
+
+<script>
+const audio = document.getElementById("audio");
+const annuncioVideo = document.getElementById("annuncioVideo");
+const playButton = document.getElementById("playButton");
+const stopButton = document.getElementById("stopButton");
+const volumeSlider = document.getElementById("volumeSlider");
+const track = document.getElementById("track");
+const cover = document.getElementById("cover");
+const ascolti = document.getElementById("ascolti");
+
+/* AUDIO */
+const audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+const source = audioCtx.createMediaElementSource(audio);
+const gainNode = audioCtx.createGain();
+source.connect(gainNode);
+gainNode.connect(audioCtx.destination);
+gainNode.gain.value = volumeSlider.value;
+volumeSlider.oninput = ()=> gainNode.gain.value = volumeSlider.value;
+
+/* PLAY */
+playButton.onclick = async ()=>{
+  if(audioCtx.state==="suspended") await audioCtx.resume();
+  annuncioVideo.currentTime=0;
+  annuncioVideo.play();
+  track.textContent="Annuncio in corso…";
+  setTimeout(()=>{
+    audio.src="https://sp4.server89.com:7027/stream";
+    audio.play();
+  },6000);
+};
+
+/* STOP */
+stopButton.onclick = ()=>{
+  audio.pause();
+  annuncioVideo.pause();
+  track.textContent="Fermato";
+};
+
+/* DATA */
+setInterval(()=>{
+  datetime.textContent=new Date().toLocaleString("it-IT");
+},1000);
+
+/* TITOLI + COVER */
+async function aggiornaBrano(){
+  try{
+    const r = await fetch("https://sp4.server89.com:7027/stats?sid=1&json=1");
+    const j = await r.json();
+    if(!j.songtitle){
+      track.textContent="In attesa del brano…";
+      cover.style.backgroundImage="";
+      return;
+    }
+    track.textContent = j.songtitle;
+
+    const it = await fetch(
+      "https://itunes.apple.com/search?term="+
+      encodeURIComponent(j.songtitle)+"&limit=1"
+    );
+    const itj = await it.json();
+    if(itj.results.length){
+      cover.style.backgroundImage =
+        "url("+itj.results[0].artworkUrl100.replace("100x100","600x600")+")";
+    }
+  }catch(e){console.log(e);}
+}
+setInterval(aggiornaBrano,10000);
+aggiornaBrano();
+
+/* ASCOLTI */
+async function aggiornaAscolti(){
+  try{
+    const r=await fetch("https://sp4.server89.com:7027/stats?sid=1&json=1");
+    const j=await r.json();
+    ascolti.textContent=j.currentlisteners||0;
+  }catch(e){}
+}
+setInterval(aggiornaAscolti,10000);
+aggiornaAscolti();
+</script>
+
+</body>
+</html>
