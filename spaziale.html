@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Space Radio HUD</title>
+
+<style>
+body {
+    margin:0;
+    background:black;
+    font-family:sans-serif;
+}
+
+/* BOX PLAYER */
+.player-box {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 620px;
+    padding: 20px;
+    border-radius: 30px;
+    background: linear-gradient(270deg,
+        red, orange, yellow, green, cyan, blue, violet);
+    background-size: 400% 400%;
+    animation: rainbow 8s ease infinite;
+    box-shadow: 0 0 80px rgba(255,255,255,0.9);
+    color: white;
+    text-align: center;
+    z-index: 10;
+}
+
+@keyframes rainbow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* DATA + ORA (IN ALTO A SINISTRA) */
+.datetime {
+    position: absolute;
+    top: 12px;
+    left: 20px;
+    font-size: 13px;
+    text-align: left;
+    line-height: 1.4;
+    text-shadow: 0 0 6px white;
+}
+
+/* MINI SPAZIO */
+.space-box {
+    width: 100%;
+    height: 260px;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 30px 0 15px;
+    box-shadow: inset 0 0 40px rgba(255,255,255,0.3);
+}
+
+#hudTitle {
+    font-size: 26px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-shadow: 0 0 10px white;
+}
+
+.controls {
+    background: rgba(0,0,0,0.6);
+    border-radius: 15px;
+    padding: 12px;
+}
+
+button {
+    background: none;
+    border: 2px solid white;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 4px;
+}
+
+button:hover {
+    background: white;
+    color: black;
+}
+
+input[type=range] { width: 100%; }
+
+.info {
+    margin-top: 8px;
+    font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="player-box">
+
+    <!-- DATA + ORA -->
+    <div class="datetime">
+        <div id="dateBox"></div>
+        <div id="timeBox"></div>
+    </div>
+
+    <div id="hudTitle">Go To Music</div>
+
+    <!-- MINI UNIVERSO -->
+    <div class="space-box" id="spaceBox"></div>
+
+    <div class="controls">
+        <audio id="audio" src="https://sp4.server89.com:7027/;" crossorigin="anonymous"></audio>
+        <button onclick="playAudio()">▶ PLAY</button>
+        <button onclick="stopAudio()">⏹ STOP</button><br><br>
+        🔊 Volume
+        <input type="range" min="0" max="1" step="0.01" onchange="audio.volume=this.value">
+    </div>
+
+    <div class="info">
+        <div id="listeners">Ascoltatori: 0</div>
+        <div id="artist"></div>
+        <div id="title"></div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+
+<script>
+/* ===== MINI SCENA THREE.JS ===== */
+const container = document.getElementById("spaceBox");
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x000000, 50, 500);
+
+const camera = new THREE.PerspectiveCamera(
+    60,
+    container.clientWidth / container.clientHeight,
+    1,
+    1000
+);
+camera.position.z = 200;
+
+const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+renderer.setSize(container.clientWidth, container.clientHeight);
+container.appendChild(renderer.domElement);
+
+/* NEBULOSA */
+const nebula = new THREE.Mesh(
+    new THREE.PlaneGeometry(500,500),
+    new THREE.MeshBasicMaterial({ color:0x6633ff, transparent:true, opacity:0.15 })
+);
+nebula.rotation.x = Math.PI/2;
+scene.add(nebula);
+
+/* STELLE */
+const starsGeo = new THREE.BufferGeometry();
+const stars=[];
+for(let i=0;i<1500;i++){
+    stars.push((Math.random()-0.5)*800,(Math.random()-0.5)*400,(Math.random()-0.5)*800);
+}
+starsGeo.setAttribute('position',new THREE.Float32BufferAttribute(stars,3));
+scene.add(new THREE.Points(
+    starsGeo,
+    new THREE.PointsMaterial({color:0xffffff,size:1.5})
+));
+
+/* METEORE */
+const meteors=[];
+function createMeteor(){
+    const m=new THREE.Mesh(
+        new THREE.SphereGeometry(1.5,6,6),
+        new THREE.MeshBasicMaterial({color:0xffaa00})
+    );
+    m.position.set(Math.random()*400-200,Math.random()*200-100,-300);
+    m.speed=Math.random()*2+1;
+    m.trail=new THREE.Line(
+        new THREE.BufferGeometry(),
+        new THREE.LineBasicMaterial({color:0xffaa00})
+    );
+    scene.add(m.trail,m);
+    meteors.push(m);
+}
+for(let i=0;i<40;i++) createMeteor();
+
+/* ANIMAZIONE */
+function animate(){
+    requestAnimationFrame(animate);
+    nebula.rotation.z+=0.0005;
+    meteors.forEach(m=>{
+        m.position.z+=m.speed;
+        m.trail.geometry.setFromPoints([
+            m.position.clone(),
+            new THREE.Vector3(m.position.x,m.position.y,m.position.z-20)
+        ]);
+        if(m.position.z>200) m.position.z=-300;
+    });
+    renderer.render(scene,camera);
+}
+animate();
+
+/* AUDIO */
+const audio=document.getElementById("audio");
+function playAudio(){ audio.muted=false; audio.play(); }
+function stopAudio(){ audio.pause(); audio.currentTime=0; }
+
+/* SHOUTCAST */
+const cors="https://cors.server89.com/cors/";
+const statsURL=cors+"https://sp4.server89.com:7027/stats?json=1";
+
+function updateRadio(){
+    fetch(statsURL).then(r=>r.json()).then(d=>{
+        listeners.innerText="Ascoltatori: "+(d.currentlisteners||0);
+        if(d.songtitle?.includes("-")){
+            const s=d.songtitle.split("-");
+            artist.innerText=s[0].trim();
+            title.innerText=s[1].trim();
+        } else {
+            title.innerText=d.songtitle||"";
+            artist.innerText="";
+        }
+    });
+}
+updateRadio();
+setInterval(updateRadio,15000);
+
+/* AUTOPLAY */
+document.addEventListener("DOMContentLoaded",()=>{
+    audio.muted=true;
+    audio.play().catch(()=>{});
+});
+
+/* DATA + ORA */
+const giorni=["Domenica","Lunedì","Martedì","Mercoledì","Giovedì","Venerdì","Sabato"];
+const mesi=["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
+
+function updateDateTime(){
+    const now=new Date();
+    dateBox.innerText=
+        `${giorni[now.getDay()]} ${now.getDate()} ${mesi[now.getMonth()]} ${now.getFullYear()}`;
+    timeBox.innerText=
+        now.toLocaleTimeString("it-IT");
+}
+updateDateTime();
+setInterval(updateDateTime,1000);
+</script>
+
+</body>
+</html
