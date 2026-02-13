@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Gioco della Bottiglia</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .game {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 340px;
+        }
+
+        /* 🌈 TITOLO ARCOBALENO ANIMATO */
+        .rainbow-title {
+            background: linear-gradient(
+                270deg,
+                red,
+                orange,
+                yellow,
+                green,
+                cyan,
+                blue,
+                violet
+            );
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: rainbow 4s ease infinite;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .bottle {
+            width: 120px;
+            height: 120px;
+            margin: 20px auto;
+            background: url("https://xatimg.com/image/JKDIkX8sVzJC.png") no-repeat center;
+            background-size: contain;
+        }
+
+        button {
+            padding: 14px 24px;
+            font-size: 18px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            background: #ff6f91;
+        }
+
+        button:hover {
+            background: #ff4f7b;
+        }
+
+        /* 🌈 TESTO BOTTONE */
+        .rainbow-text {
+            background: linear-gradient(
+                270deg,
+                red,
+                orange,
+                yellow,
+                green,
+                cyan,
+                blue,
+                violet
+            );
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: rainbow 3s ease infinite;
+            font-weight: bold;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game">
+    <h1 class="rainbow-title">🍾 Gioco della Bottiglia</h1>
+
+    <div id="bottle" class="bottle"></div>
+
+    <button onclick="spinBottle()">
+        <span class="rainbow-text">Gira la bottiglia</span>
+    </button>
+
+    <div id="result" class="result"></div>
+</div>
+
+<script>
+    const names = [
+        "Marco", "Giulia", "Luca", "Sara", "Andrea",
+        "Chiara", "Davide", "Martina", "Simone", "Francesca"
+    ];
+
+    const dares = [
+        "Bevi un sorso 🍺",
+        "Fai 10 squat 💪",
+        "Canta una canzone 🎤",
+        "Imita qualcuno 🤡",
+        "Dì una cosa imbarazzante 😳",
+        "Posta una story imbarazzante 📱",
+        "Parla con accento straniero 🗣️",
+        "Fai un complimento a tutti 💖",
+        "Manda un messaggio a caso 📩",
+        "Fai 10 flessioni 💥",
+        "Balla senza musica 🕺",
+        "Fatti disegnare sul braccio ✍️",
+        "Racconta un segreto 😈",
+        "Cambia posto 🔄",
+        "Fai una faccia buffa 🤪",
+        "Bevi due sorsi 🍻",
+        "Scegli il prossimo pegno 👀",
+        "Parla solo sussurrando 🤫",
+        "Fai una foto stupida 🤳",
+        "Abbraccia qualcuno 🤗"
+    ];
+
+    let lastName = null;
+
+    function getRandomName() {
+        let name;
+        do {
+            name = names[Math.floor(Math.random() * names.length)];
+        } while (name === lastName);
+        lastName = name;
+        return name;
+    }
+
+    function spinBottle() {
+        const bottle = document.getElementById("bottle");
+        const result = document.getElementById("result");
+
+        result.textContent = "La bottiglia sta girando... 🍾";
+
+        bottle.style.transition = "none";
+        bottle.style.transform = "rotate(0deg)";
+
+        setTimeout(() => {
+            const spin = Math.floor(Math.random() * 360) + 720;
+            bottle.style.transition = "transform 2s ease-out";
+            bottle.style.transform = `rotate(${spin}deg)`;
+        }, 50);
+
+        setTimeout(() => {
+            const name = getRandomName();
+            const dare = dares[Math.floor(Math.random() * dares.length)];
+            result.textContent = `👉 ${name} deve: ${dare}`;
+        }, 2000);
+    }
+</script>
+
+</body>
+</html>
