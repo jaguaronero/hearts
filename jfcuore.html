@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Cuore Arcobaleno Jaguaro e Ferny</title>
+
+<style>
+    body{
+        margin:0;
+        height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        background:transparent;
+        font-family:Arial, sans-serif;
+    }
+
+    /* CUORE */
+    .heart{
+        position:relative;
+        width:300px;
+        height:270px;
+        transform:rotate(-45deg);
+        animation: glow 3s linear infinite;
+    }
+
+    .heart::before,
+    .heart::after{
+        content:"";
+        position:absolute;
+        width:300px;
+        height:270px;
+        background:linear-gradient(45deg,
+            red, orange, yellow, lime, cyan, blue, violet, red);
+        background-size:400% 400%;
+        border-radius:50%;
+        animation: rainbow 5s linear infinite;
+    }
+
+    .heart::before{
+        top:-150px;
+        left:0;
+    }
+
+    .heart::after{
+        left:150px;
+        top:0;
+    }
+
+    /* parte centrale cuore */
+    .core{
+        position:absolute;
+        width:300px;
+        height:270px;
+        background:linear-gradient(45deg,
+            red, orange, yellow, lime, cyan, blue, violet, red);
+        background-size:400% 400%;
+        animation: rainbow 5s linear infinite;
+    }
+
+    /* testo */
+    .text{
+        position:absolute;
+        top:47%;
+        left:50%;
+        transform:translate(-50%,-50%) rotate(45deg);
+        color:white;
+        font-size:45px;
+        font-weight:bold;
+        text-align:center;
+        text-shadow:0 0 10px white, 0 0 20px cyan, 0 0 40px magenta;
+        z-index:10;
+    }
+
+    /* animazione arcobaleno */
+    @keyframes rainbow{
+        0%{background-position:0% 50%;}
+        50%{background-position:100% 50%;}
+        100%{background-position:0% 50%;}
+    }
+
+    /* effetto luminoso */
+    @keyframes glow{
+        0%,100%{filter:drop-shadow(0 0 15px white);}
+        50%{filter:drop-shadow(0 0 35px cyan);}
+    }
+</style>
+</head>
+
+<body>
+
+<div class="heart">
+    <div class="core"></div>
+    <div class="text">jaguaro<br>e<br>ferny<br> ❤️</div>
+</div>
+
+</body>
+</html>
