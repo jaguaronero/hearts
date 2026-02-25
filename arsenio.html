@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caduta note musicali trasparente</title>
+<style>
+  body {
+    margin: 0;
+    background: transparent; /* Sfondo trasparente */
+    overflow: hidden;
+    height: 100vh;
+    position: relative;
+  }
+
+  .note {
+    position: absolute;
+    font-size: 24px;
+    color: white;
+    animation-name: caduta;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    pointer-events: none; /* le note non interferiscono con clic o selezioni */
+  }
+
+  @keyframes caduta {
+    0% {
+      transform: translateY(-50px) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(100vh) rotate(360deg);
+      opacity: 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<script>
+  const noteSimboli = ['♪','♩','♫','♬'];
+  const colori = ['#ff0055', '#00ff99', '#ffaa00', '#66ccff', '#ff66ff', '#ffff66'];
+
+  function creaNota() {
+    const nota = document.createElement('div');
+    nota.classList.add('note');
+    
+    // Simbolo e colore casuale
+    nota.textContent = noteSimboli[Math.floor(Math.random() * noteSimboli.length)];
+    nota.style.color = colori[Math.floor(Math.random() * colori.length)];
+
+    // Posizione orizzontale casuale
+    nota.style.left = Math.random() * window.innerWidth + 'px';
+
+    // Grandezza casuale tra 16px e 36px
+    nota.style.fontSize = (Math.random() * 20 + 16) + 'px';
+
+    // Durata animazione casuale tra 3 e 7 secondi
+    nota.style.animationDuration = (Math.random() * 4 + 3) + 's';
+
+    document.body.appendChild(nota);
+
+    // Rimuove la nota dopo l'animazione
+    setTimeout(() => {
+      nota.remove();
+    }, parseFloat(nota.style.animationDuration) * 1000);
+  }
+
+  // Genera note continuamente
+  setInterval(creaNota, 300);
+</script>
+
+</body>
+</html>
