@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Radio Jaguaro</title>
+
+<style>
+body {
+  background:#0b0b0b;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  font-family:Arial;
+}
+
+.player {
+  width:340px;
+  background:#111;
+  border-radius:20px;
+  padding:20px;
+  border:3px solid;
+  animation:borderRGB 5s linear infinite;
+}
+
+@keyframes borderRGB {
+  0%{border-color:red;}
+  20%{border-color:orange;}
+  40%{border-color:yellow;}
+  60%{border-color:green;}
+  80%{border-color:blue;}
+  100%{border-color:violet;}
+}
+
+.title {
+  text-align:center;
+  font-size:32px;
+  font-weight:bold;
+  background:linear-gradient(90deg,red,orange,yellow,green,cyan,blue,violet);
+  background-size:400%;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:rainbow 4s linear infinite;
+}
+
+@keyframes rainbow {
+  from{background-position:0%}
+  to{background-position:400%}
+}
+
+.led-bar {
+    height: 10px;
+    margin: 15px 0;
+    background: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet);
+    background-size: 400%;
+    animation: ledMove 2s linear infinite;
+    border-radius: 5px;
+}
+
+@keyframes ledMove {
+    0% { background-position: 0%; }
+    100% { background-position: 400%; }
+}
+
+.equalizer {
+  display:flex;
+  justify-content:center;
+  gap:4px;
+  height:60px;
+  margin:15px 0;
+}
+
+.bar {
+  width:8px;
+  background:linear-gradient(red, yellow, lime, cyan);
+  border-radius:5px;
+}
+
+.controls {
+  text-align:center;
+}
+
+button, select {
+  background:#000;
+  color:#0ff;
+  border:2px solid #0ff;
+  border-radius:10px;
+  padding:8px;
+  margin:5px;
+  cursor:pointer;
+}
+
+input[type=range] {
+  width:100%;
+}
+</style>
+</head>
+
+<body>
+
+<div class="player">
+  <div class="title">JAGUARO</div>
+  <div class="title">SCEGLI LA CANZONE</div>
+  <div class="led-bar"></div>
+
+  <div class="controls">
+
+    <select id="station" onchange="changeStation()">
+      <option value="https://gotomusic.weebly.com/uploads/1/1/3/9/113975311/battiti_del_cuore.mp3">Battiti dl cuore</option>
+      <option value="https://gotomusic.weebly.com/uploads/1/1/3/9/113975311/cammino_tra_ricordi.mp3">Cammino tra ricordi</option>
+      <option value="https://gotomusic.weebly.com/uploads/1/1/3/9/113975311/canta_per_chi_non_ha_voce.mp3">Canta per chi...</option>
+      <option value="https://gotomusic.weebly.com/uploads/1/1/3/9/113975311/cenere_damore.mp3">Cenere d'amore</option>
+      <option value="https://gotomusic.weebly.com/uploads/1/1/3/9/113975311/cuore_bruciato.mp3">Cuore bruciato</option>
+      <option value="https://gotomusic.weebly.com/uploads/1/1/3/9/113975311/cuore_errante.mp3">Cuore errante</option>
+      <option value="https://gotomusic.weebly.com/uploads/1/1/3/9/113975311/cuore_in_vento.mp3">Cuore in vento</option>
+      <option value="https://gotomusic.weebly.com/uploads/1/1/3/9/113975311/cuore_infranto_2.0.mp3">Cuore infranto</option>
+      <option value="https://gotomusic.weebly.com/uploads/1/1/3/9/113975311/cuore_rosso_rock.mp3">Cuore rosso rock</option>
+    </select><br>
+
+    <button onclick="prevStation()">⏮️</button>
+    <button onclick="playRadio()">▶ PLAY</button>
+    <button onclick="stopRadio()">⏹ STOP</button>
+    <button onclick="nextStation()">⏭️</button>
+
+    <p style="color:white">Volume</p>
+    <input type="range" min="0" max="1" step="0.01" onchange="radio.volume=this.value">
+  </div>
+
+  <div class="equalizer" id="equalizer"></div>
+
+  <audio id="radio" crossorigin="anonymous"></audio>
+</div>
+
+<script>
+const audio = document.getElementById("radio");
+const eq = document.getElementById("equalizer");
+const stationSelect = document.getElementById("station");
+
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+const ctx = new AudioContext();
+const source = ctx.createMediaElementSource(audio);
+const analyser = ctx.createAnalyser();
+
+analyser.fftSize = 64;
+source.connect(analyser);
+analyser.connect(ctx.destination);
+
+const bufferLength = analyser.frequencyBinCount;
+const dataArray = new Uint8Array(bufferLength);
+
+// crea barre equalizer
+for(let i=0;i<bufferLength;i++){
+  const bar=document.createElement("div");
+  bar.className="bar";
+  eq.appendChild(bar);
+}
+
+const bars=document.querySelectorAll(".bar");
+
+function animateEQ(){
+  requestAnimationFrame(animateEQ);
+  analyser.getByteFrequencyData(dataArray);
+  bars.forEach((bar,i)=>{
+    bar.style.height = (dataArray[i]/2)+"px";
+  });
+}
+
+animateEQ();
+
+function playRadio(){
+  ctx.resume();
+  audio.play();
+}
+
+function stopRadio(){
+  audio.pause();
+}
+
+function changeStation(){
+  audio.src = stationSelect.value;
+  playRadio();
+}
+
+/* 🎶 PLAYLIST MULTIPLA + CONTROLLI ⏭️ */
+
+function nextStation(){
+  let index = stationSelect.selectedIndex;
+  if(index < stationSelect.options.length - 1){
+    stationSelect.selectedIndex = index + 1;
+  } else {
+    stationSelect.selectedIndex = 0;
+  }
+  changeStation();
+}
+
+function prevStation(){
+  let index = stationSelect.selectedIndex;
+  if(index > 0){
+    stationSelect.selectedIndex = index - 1;
+  } else {
+    stationSelect.selectedIndex = stationSelect.options.length - 1;
+  }
+  changeStation();
+}
+
+/* 🔥 NUOVA FUNZIONE: PASSAGGIO AUTOMATICO AL BRANO SUCCESSIVO */
+
+audio.addEventListener("ended", function(){
+  nextStation();
+});
+</script>
+
+</body>
+</html>
