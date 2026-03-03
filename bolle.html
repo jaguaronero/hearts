@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bolle Ultra 3D</title>
+
+<style>
+body{
+    margin:0;
+    overflow:hidden;
+    background: radial-gradient(circle at top,#bdf3ff,#ffffff);
+}
+
+/* Bolla liquida */
+.bubble{
+    position:absolute;
+    border-radius:50%;
+    backdrop-filter: blur(8px);
+    background: radial-gradient(circle at 30% 30%,
+        rgba(255,255,255,0.9),
+        rgba(255,255,255,0.4) 30%,
+        rgba(180,220,255,0.25) 60%,
+        rgba(150,200,255,0.15));
+    box-shadow:
+        inset -10px -15px 25px rgba(255,255,255,0.7),
+        inset 10px 15px 25px rgba(0,0,0,0.1),
+        0 10px 25px rgba(0,0,0,0.1);
+    pointer-events:auto;
+}
+
+/* Stelline multiple */
+.star{
+    position:absolute;
+    color:white;
+    font-size:12px;
+    text-shadow:0 0 8px white,0 0 15px #fff;
+    animation:spin 3s linear infinite;
+}
+
+@keyframes spin{
+    from{ transform:rotate(0deg) translateX(10px) rotate(0deg); }
+    to{ transform:rotate(360deg) translateX(10px) rotate(-360deg); }
+}
+
+@keyframes pop{
+    0%{ transform:scale(1); opacity:1; }
+    100%{ transform:scale(1.8); opacity:0; }
+}
+</style>
+</head>
+<body>
+
+<script>
+const bubbles = [];
+const bubbleCount = 30;
+
+class Bubble{
+    constructor(){
+        this.size = Math.random()*50+40;
+        this.x = Math.random()*window.innerWidth;
+        this.y = Math.random()*window.innerHeight;
+        this.vx = (Math.random()-0.5)*2;
+        this.vy = (Math.random()-0.5)*2;
+
+        this.el = document.createElement("div");
+        this.el.className = "bubble";
+        this.el.style.width = this.size+"px";
+        this.el.style.height = this.size+"px";
+        document.body.appendChild(this.el);
+
+        // crea stelline multiple
+        for(let i=0;i<3;i++){
+            const star = document.createElement("div");
+            star.className="star";
+            star.innerHTML="✦";
+            star.style.top = "50%";
+            star.style.left = "50%";
+            star.style.animationDuration = (Math.random()*2+2)+"s";
+            this.el.appendChild(star);
+        }
+
+        this.el.addEventListener("click", ()=>this.pop());
+    }
+
+    update(){
+        this.x += this.vx;
+        this.y += this.vy;
+
+        // rimbalzo pareti
+        if(this.x <=0 || this.x+this.size>=window.innerWidth) this.vx *= -1;
+        if(this.y <=0 || this.y+this.size>=window.innerHeight) this.vy *= -1;
+
+        this.el.style.transform = `translate(${this.x}px,${this.y}px)`;
+    }
+
+    pop(){
+        this.el.style.animation="pop 0.3s forwards";
+        setTimeout(()=>this.el.remove(),300);
+    }
+}
+
+// collisioni fisiche semplici
+function handleCollisions(){
+    for(let i=0;i<bubbles.length;i++){
+        for(let j=i+1;j<bubbles.length;j++){
+            const a=bubbles[i];
+            const b=bubbles[j];
+
+            const dx=a.x-b.x;
+            const dy=a.y-b.y;
+            const dist=Math.sqrt(dx*dx+dy*dy);
+
+            if(dist < a.size/2 + b.size/2){
+                // scambio velocità semplice
+                [a.vx,b.vx] = [b.vx,a.vx];
+                [a.vy,b.vy] = [b.vy,a.vy];
+            }
+        }
+    }
+}
+
+for(let i=0;i<bubbleCount;i++){
+    bubbles.push(new Bubble());
+}
+
+function animate(){
+    bubbles.forEach(b=>b.update());
+    handleCollisions();
+    requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+
+</body>
+</html>
