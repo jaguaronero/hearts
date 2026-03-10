@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>30 Farfalle Realistiche</title>
+
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+    background: transparent; /* Sfondo trasparente */
+}
+
+/* Contenitore */
+.container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* Farfalla */
+.butterfly {
+    position: absolute;
+    display: inline-block;
+    animation: fly linear infinite;
+}
+
+/* Battito ali */
+.butterfly span {
+    display: inline-block;
+    animation: flap 0.3s ease-in-out infinite alternate;
+}
+
+/* Movimento realistico */
+@keyframes fly {
+    0% {
+        transform: translate(0, 100vh) rotate(0deg);
+        opacity: 0;
+    }
+    10% { opacity: 1; }
+    25% {
+        transform: translate(50px, 75vh) rotate(10deg);
+    }
+    50% {
+        transform: translate(-40px, 50vh) rotate(-15deg);
+    }
+    75% {
+        transform: translate(60px, 25vh) rotate(10deg);
+    }
+    100% {
+        transform: translate(-30px, -10vh) rotate(0deg);
+        opacity: 0;
+    }
+}
+
+/* Effetto ali */
+@keyframes flap {
+    from { transform: scaleX(1); }
+    to { transform: scaleX(0.6); }
+}
+</style>
+</head>
+
+<body>
+<div class="container"></div>
+
+<script>
+const container = document.querySelector(".container");
+const colors = [
+    "#ff4d6d", "#ffbe0b", "#8338ec", "#3a86ff",
+    "#06d6a0", "#f15bb5", "#ff006e", "#fb5607"
+];
+
+for (let i = 0; i < 30; i++) {
+    const butterfly = document.createElement("div");
+    butterfly.classList.add("butterfly");
+
+    const wing = document.createElement("span");
+    wing.innerHTML = "🦋";
+
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+    butterfly.style.left = Math.random() * 100 + "vw";
+    butterfly.style.animationDuration = (8 + Math.random() * 8) + "s";
+    butterfly.style.animationDelay = Math.random() * 10 + "s";
+    butterfly.style.fontSize = (25 + Math.random() * 35) + "px";
+    butterfly.style.filter = `drop-shadow(0 0 6px ${randomColor})`;
+
+    wing.style.color = randomColor;
+
+    butterfly.appendChild(wing);
+    container.appendChild(butterfly);
+}
+</script>
+
+</body>
+</html>
