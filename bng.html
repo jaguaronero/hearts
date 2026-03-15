@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Music Sky</title>
+
+<style>
+
+body{
+background:#000;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+font-family:Arial;
+}
+
+/* AREA */
+.box{
+width:500px;
+height:500px;
+position:relative;
+overflow:hidden;
+}
+
+/* TESTO */
+.title{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+font-size:42px;
+font-weight:bold;
+color:gold;
+text-shadow:
+0 0 10px #ffd700,
+0 0 20px #ffcc00,
+0 0 30px #ffaa00;
+z-index:10;
+}
+
+/* BOLLE */
+.bubble{
+position:absolute;
+bottom:-80px;
+border-radius:50%;
+pointer-events:none;
+
+background:
+radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(255,255,255,0.2) 25%, transparent 40%),
+radial-gradient(circle at 70% 70%, rgba(255,255,255,0.3), transparent 60%);
+
+box-shadow:
+inset 0 0 10px rgba(255,255,255,0.6),
+0 0 15px rgba(255,255,255,0.3);
+
+animation:float linear infinite;
+}
+
+@keyframes float{
+0%{
+transform:translateY(0) translateX(0) scale(1);
+opacity:0.8;
+}
+50%{
+transform:translateY(-250px) translateX(30px) scale(1.1);
+}
+100%{
+transform:translateY(-650px) translateX(-30px) scale(1.2);
+opacity:0;
+}
+}
+
+/* STELLE */
+.star{
+position:absolute;
+background:white;
+border-radius:50%;
+opacity:0.8;
+animation:twinkle 2s infinite alternate;
+}
+
+@keyframes twinkle{
+from{opacity:0.2;transform:scale(0.7);}
+to{opacity:1;transform:scale(1.4);}
+}
+
+/* NOTE MUSICALI */
+.note{
+position:absolute;
+color:white;
+font-size:24px;
+animation:noteFloat linear infinite;
+opacity:0.8;
+}
+
+@keyframes noteFloat{
+0%{
+transform:translateY(0) rotate(0deg);
+opacity:0;
+}
+20%{
+opacity:1;
+}
+100%{
+transform:translateY(-600px) rotate(360deg);
+opacity:0;
+}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="box" id="musicBox">
+<div class="title">Go To Music</div>
+</div>
+
+<script>
+
+const box=document.getElementById("musicBox")
+
+/* 50 BOLLE */
+for(let i=0;i<50;i++){
+
+let bubble=document.createElement("div")
+bubble.className="bubble"
+
+let size=Math.random()*40+15
+bubble.style.width=size+"px"
+bubble.style.height=size+"px"
+
+bubble.style.left=Math.random()*480+"px"
+
+bubble.style.animationDuration=(Math.random()*10+8)+"s"
+bubble.style.animationDelay=Math.random()*10+"s"
+
+box.appendChild(bubble)
+
+}
+
+/* STELLE */
+for(let i=0;i<80;i++){
+
+let star=document.createElement("div")
+star.className="star"
+
+let size=Math.random()*3+1
+star.style.width=size+"px"
+star.style.height=size+"px"
+
+star.style.left=Math.random()*500+"px"
+star.style.top=Math.random()*500+"px"
+
+star.style.animationDuration=(Math.random()*3+1)+"s"
+
+box.appendChild(star)
+
+}
+
+/* NOTE MUSICALI */
+const notes=["♪","♫","♬","♩"]
+
+for(let i=0;i<15;i++){
+
+let note=document.createElement("div")
+note.className="note"
+
+note.innerHTML=notes[Math.floor(Math.random()*notes.length)]
+
+note.style.left=Math.random()*480+"px"
+note.style.bottom="-40px"
+
+note.style.animationDuration=(Math.random()*8+6)+"s"
+note.style.animationDelay=Math.random()*5+"s"
+
+box.appendChild(note)
+
+}
+
+</script>
+
+</body>
+</html>
