@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Bolle con vento</title>
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+    background: transparent; /* ✅ trasparente */
+  }
+  canvas {
+    display: block;
+    background: transparent; /* ✅ sicurezza extra */
+  }
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d", { alpha: true }); // ✅ supporto trasparenza
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const img = new Image();
+img.src = "https://xatimg.com/image/EAGUg25wX7Rz.png";
+
+const gravity = 0.15;
+const friction = 0.98;
+
+// 💨 VENTO
+let windTime = 0;
+function getWind() {
+  windTime += 0.01;
+  return Math.sin(windTime) * 0.3;
+}
+
+// 💥 PARTICELLE
+class Particle {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.size = Math.random() * 3 + 1;
+    this.dx = (Math.random() - 0.5) * 6;
+    this.dy = (Math.random() - 0.5) * 6;
+    this.life = 60;
+  }
+
+  update() {
+    let wind = getWind();
+    this.dx += wind * 0.5;
+
+    this.x += this.dx;
+    this.y += this.dy;
+    this.life--;
+  }
+
+  draw() {
+    ctx.fillStyle = "rgba(255,255,255,0.6)";
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+// 🫧 BOLLE
+class Bubble {
+  constructor() {
+    this.radius = Math.random() * 40 + 30;
+    this.x = Math.random() * canvas.width;
+    this.y = -this.radius;
+    this.dx = (Math.random() - 0.5) * 2;
+    this.dy = Math.random() * 2;
+    this.alive = true;
+  }
+
+  draw() {
+    ctx.save();
+
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.clip();
+
+    ctx.drawImage(
+      img,
+      this.x - this.radius,
+      this.y - this.radius,
+      this.radius * 2,
+      this.radius * 2
+    );
+
+    ctx.restore();
+
+    // 🌈 effetto bolla
+    let gradient = ctx.createRadialGradient(
+      this.x - this.radius/3,
+      this.y - this.radius/3,
+      this.radius * 0.1,
+      this.x,
+      this.y,
+      this.radius
+    );
+
+    gradient.addColorStop(0, "rgba(255,255,255,0.4)");
+    gradient.addColorStop(0.3, "rgba(0,150,255,0.2)");
+    gradient.addColorStop(0.5, "rgba(255,0,150,0.2)");
+    gradient.addColorStop(0.7, "rgba(0,255,150,0.2)");
+    gradient.addColorStop(1, "rgba(255,255,255,0.1)");
+
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fillStyle = gradient;
+    ctx.fill();
+
+    ctx.strokeStyle = "rgba(255,255,255,0.3)";
+    ctx.stroke();
+  }
+
+  update(bubbles) {
+    let wind = getWind();
+
+    this.dx += wind;
+
+    this.dy += gravity;
+    this.dy *= friction;
+    this.dx *= friction;
+
+    this.x += this.dx;
+    this.y += this.dy;
+
+    // rimbalzo fondo
+    if (this.y + this.radius > canvas.height) {
+      this.y = canvas.height - this.radius;
+      this.dy *= -0.7;
+
+      if (Math.abs(this.dy) < 1.5) {
+        this.pop();
+      }
+    }
+
+    // collisioni
+    for (let other of bubbles) {
+      if (this === other || !other.alive) continue;
+
+      let dx = other.x - this.x;
+      let dy = other.y - this.y;
+      let distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < this.radius + other.radius) {
+        [this.dx, other.dx] = [other.dx, this.dx];
+        [this.dy, other.dy] = [other.dy, this.dy];
+      }
+    }
+
+    this.draw();
+  }
+
+  pop() {
+    this.alive = false;
+    for (let i = 0; i < 15; i++) {
+      particles.push(new Particle(this.x, this.y));
+    }
+  }
+}
+
+const bubbles = [];
+const particles = [];
+
+// spawn continuo
+function spawnBubble() {
+  if (bubbles.length < 20) {
+    bubbles.push(new Bubble());
+  }
+}
+
+setInterval(spawnBubble, 500);
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  for (let i = bubbles.length - 1; i >= 0; i--) {
+    if (!bubbles[i].alive) {
+      bubbles.splice(i, 1);
+      continue;
+    }
+    bubbles[i].update(bubbles);
+  }
+
+  for (let i = particles.length - 1; i >= 0; i--) {
+    particles[i].update();
+    particles[i].draw();
+
+    if (particles[i].life <= 0) {
+      particles.splice(i, 1);
+    }
+  }
+
+  requestAnimationFrame(animate);
+}
+
+img.onload = () => animate();
+
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+
+</body>
+</html>
