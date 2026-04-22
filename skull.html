@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Cursed Skull Apocalypse 💀</title>
+<style>
+    body {
+        margin: 0;
+        overflow: hidden;
+        background: radial-gradient(circle, #0a0a0a, #000000);
+        cursor: none;
+    }
+
+    .skull {
+        position: absolute;
+        pointer-events: none;
+        animation: fall linear infinite, spin linear infinite, flicker 0.2s infinite;
+    }
+
+    @keyframes fall {
+        0% { transform: translateY(-10vh); }
+        100% { transform: translateY(110vh); }
+    }
+
+    @keyframes spin {
+        0% { rotate: 0deg; }
+        100% { rotate: 360deg; }
+    }
+
+    @keyframes flicker {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.3; }
+    }
+
+    .evil {
+        position: absolute;
+        font-size: 40px;
+        pointer-events: none;
+        transition: transform 0.1s linear;
+        filter: drop-shadow(0 0 10px red);
+    }
+</style>
+</head>
+<body>
+
+<script>
+const NUM_SKULLS = 30;
+const NUM_EVIL = 5;
+
+// teschi normali (caos)
+for (let i = 0; i < NUM_SKULLS; i++) {
+    let skull = document.createElement("div");
+    skull.classList.add("skull");
+    skull.innerText = "💀";
+
+    skull.style.left = Math.random() * 100 + "vw";
+    skull.style.fontSize = (20 + Math.random() * 50) + "px";
+
+    skull.style.animationDuration = 
+        (3 + Math.random() * 5) + "s, " + 
+        (1 + Math.random() * 3) + "s, 0.2s";
+
+    skull.style.animationDelay = Math.random() * 5 + "s";
+
+    // movimento zig-zag
+    setInterval(() => {
+        skull.style.transform += ` translateX(${(Math.random() - 0.5) * 50}px)`;
+    }, 300);
+
+    document.body.appendChild(skull);
+}
+
+// teschi che inseguono il mouse 😈
+let mouseX = 0;
+let mouseY = 0;
+
+document.addEventListener("mousemove", e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+});
+
+for (let i = 0; i < NUM_EVIL; i++) {
+    let evil = document.createElement("div");
+    evil.classList.add("evil");
+    evil.innerText = "💀";
+
+    let x = Math.random() * window.innerWidth;
+    let y = Math.random() * window.innerHeight;
+
+    function chase() {
+        x += (mouseX - x) * 0.05;
+        y += (mouseY - y) * 0.05;
+
+        evil.style.transform = `translate(${x}px, ${y}px) scale(${1 + Math.sin(Date.now()/200)})`;
+
+        requestAnimationFrame(chase);
+    }
+
+    chase();
+    document.body.appendChild(evil);
+}
+</script>
+
+</body>
+</html>
