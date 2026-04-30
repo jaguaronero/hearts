@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Box con immagine</title>
+  <style>
+    body {
+      margin: 0;
+    }
+
+    .box {
+      width: 1900px;
+      height: 900px;
+      background-image: url('https://xatimg.com/image/IkWozsF7xLeh.gif');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .rainbow-text {
+      font-size: 80px;
+      font-weight: bold;
+      background: linear-gradient(
+        90deg,
+        red,
+        orange,
+        yellow,
+        green,
+        cyan,
+        blue,
+        violet,
+        red
+      );
+      background-size: 400%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+
+      animation: rainbow 5s linear infinite;
+    }
+
+    @keyframes rainbow {
+      0% {
+        background-position: 0%;
+      }
+      100% {
+        background-position: 400%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <div class="rainbow-text">Go To Music</div>
+</div>
+
+</body>
+</html>
