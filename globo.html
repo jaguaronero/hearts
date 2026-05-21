@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8" />
+    <title>Globo angel</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://unpkg.com/globe.gl@2.29.0/dist/globe.gl.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            background: transparent;
+            font-family: 'Orbitron', sans-serif;
+            color: #00ffea;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #header-date-wrapper {
+            width: 100%;
+            max-width: 600px;
+            overflow: hidden;
+            border-bottom: 2px solid #00ffea;
+            position: relative;
+        }
+
+        #header-date {
+            display: inline-block;
+            white-space: nowrap;
+            padding: 10px 0;
+            font-size: 18px;
+            font-weight: 700;
+            animation: marquee 10s linear infinite alternate;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-100% + 550px)); }
+        }
+
+        .container {
+            position: relative;
+            width: 600px;
+            height: 500px;
+            margin-top: 5px;
+        }
+
+        #globe-container {
+            width: 360px;
+            height: 360px;
+            border: 2px solid #00ffea;
+            border-radius: 50%;
+            box-shadow: 0 0 25px rgba(0, 255, 234, 0.6);
+            background: radial-gradient(circle, #1c2526, #0a0a1a);
+            overflow: hidden;
+            position: absolute;
+            top: 5px;
+            left: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+        }
+
+        #weather-box,
+        #horoscope-box,
+        #visitor-list,
+        #music-box {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid #00ffea;
+            border-radius: 10px;
+            padding: 8px;
+            font-size: 10px;
+            color: #00ff00;
+            z-index: 100;
+            box-shadow: 0 0 10px rgba(0, 255, 234, 0.2);
+        }
+
+        #weather-box { top: 10px; left: -10px; width: 100px; text-align: center; }
+        #horoscope-box { top: 110px; left: -10px; width: 100px; text-align: center; }
+
+        #visitor-list {
+            top: 10px;
+            right: 20px;
+            width: 130px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        #visitor-list strong {
+            color: #ff0066;
+            display: block;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        #music-box {
+            top: 90px;
+            right: 20px;
+            width: 130px;
+            text-align: center;
+        }
+
+        #music-box strong {
+            color: #ff00ff;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .music-link {
+            display: block;
+            margin: 6px 0;
+            padding: 6px;
+            border: 1px solid #00ffea;
+            border-radius: 6px;
+            color: #00ffff;
+            text-decoration: none;
+            font-size: 10px;
+        }
+
+        ul { list-style: none; padding: 0; margin: 0; }
+        li { border-bottom: 1px solid rgba(0,255,234,0.2); padding: 4px 0; font-size: 9px; }
+
+        .city-name { color: #00ffff; font-weight: bold; }
+    </style>
+</head>
+
+<body>
+
+<div id="header-date-wrapper">
+    <div id="header-date">
+        <span style="color:#ff0066" id="d-day">--</span>
+        &nbsp;
+        <span style="color:#00ffcc" id="d-month">--</span>
+        &nbsp;
+        <span style="color:#07A657" id="d-year">----</span>
+        &nbsp;&nbsp;
+        <span style="color:red">Ore</span>
+        &nbsp;
+        <span style="color:#ff9900" id="d-hour">00</span>:
+        <span style="color:#00ccff" id="d-minute">00</span>:
+        <span style="color:#ff00ff" id="d-second">00</span>
+    </div>
+</div>
+
+<div class="container">
+
+    <div id="globe-container"></div>
+
+    <div id="weather-box">
+        <strong style="color:#00ffea">METEO</strong>
+        <div id="weather-info">Caricamento...</div>
+    </div>
+
+    <div id="horoscope-box">
+        <strong style="color:#00ffea">OROSCOPO</strong>
+        <div id="horoscope-name" style="color:#ffff00; font-weight:bold;">--</div>
+        <div id="horoscope-desc" style="font-size:9px;">Calcolo...</div>
+    </div>
+
+    <div id="visitor-list">
+        <strong>VISITATORI REALI</strong>
+        <ul id="list-ul"></ul>
+    </div>
+
+    <div id="music-box">
+        <strong>MUSIC AREA</strong>
+        <a href="https://xat.com/Go_To_Music" class="music-link" target="_blank">Go To Music</a>
+        <a href="https://xat.com/Fantasy_Music" class="music-link" target="_blank">Fantasy Music</a>
+    </div>
+
+</div>
+
+<script>
+
+const globeElem = document.getElementById('globe-container');
+
+const globe = Globe()
+    .width(360)
+    .height(360)
+    .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-night.jpg')
+    .backgroundColor('rgba(0,0,0,0)')
+    .pointAltitude(0.12)
+    .pointColor(() => '#ff0066')
+    .pointRadius(0.7)
+    .pointLabel('name')
+    (globeElem);
+
+globe.controls().autoRotate = true;
+globe.controls().autoRotateSpeed = 0.8;
+
+let visitorsData = [];
+
+/* =========================
+   VISITATORI REALI (FIX)
+   ========================= */
+
+function getVisitedIPs() {
+    return JSON.parse(localStorage.getItem("visited_ips") || "[]");
+}
+
+function saveVisitedIP(ip) {
+    const ips = getVisitedIPs();
+    if (!ips.includes(ip)) {
+        ips.push(ip);
+        localStorage.setItem("visited_ips", JSON.stringify(ips));
+        return true;
+    }
+    return false;
+}
+
+function addVisitor(city, lat, lng, ip) {
+
+    const isNew = saveVisitedIP(ip);
+
+    if (!isNew) return; // evita duplicati (non reinserisce lo stesso visitatore)
+
+    const ul = document.getElementById('list-ul');
+    const li = document.createElement('li');
+
+    const span = document.createElement('span');
+    span.className = 'city-name';
+    span.textContent = city;
+
+    li.appendChild(span);
+    ul.prepend(li);
+
+    visitorsData.push({ lat, lng, name: city });
+
+    globe.pointsData(visitorsData);
+
+    globe.pointOfView({ lat, lng, altitude: 2.2 }, 2000);
+}
+
+/* ========================= */
+
+async function detectUser() {
+
+    try {
+
+        const res = await fetch('https://ipwho.is/');
+        const data = await res.json();
+
+        if (!data.success) throw new Error("Geo failed");
+
+        const city = data.city || 'Sconosciuta';
+
+        addVisitor(city, data.latitude, data.longitude, data.ip);
+
+        getWeather(data.latitude, data.longitude);
+
+    } catch (err) {
+
+        console.error("Geo Error");
+
+        addVisitor("User Online", 41.89, 12.49, "fallback");
+
+        getWeather(41.89, 12.49);
+    }
+}
+
+/* WEATHER */
+async function getWeather(lat, lon) {
+
+    try {
+
+        const res = await fetch(
+            `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`
+        );
+
+        const data = await res.json();
+
+        document.getElementById('weather-info').innerText =
+            `${data.current_weather.temperature}°C`;
+
+    } catch (e) {
+        document.getElementById('weather-info').innerText = "N/A";
+    }
+}
+
+/* TIME */
+function updateTime() {
+
+    const n = new Date();
+
+    const mesi = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
+
+    document.getElementById('d-day').innerText = n.getDate();
+    document.getElementById('d-month').innerText = mesi[n.getMonth()];
+    document.getElementById('d-year').innerText = n.getFullYear();
+    document.getElementById('d-hour').innerText = String(n.getHours()).padStart(2,'0');
+    document.getElementById('d-minute').innerText = String(n.getMinutes()).padStart(2,'0');
+    document.getElementById('d-second').innerText = String(n.getSeconds()).padStart(2,'0');
+}
+
+/* HOROSCOPE */
+function updateHoroscope() {
+
+    const now = new Date();
+    const day = now.getDate();
+    const month = now.getMonth() + 1;
+
+    let sign = "";
+    let desc = "";
+
+    if ((month == 3 && day >= 21) || (month == 4 && day <= 19)) sign="ARIETE", desc="Grinta e nuovi inizi!";
+    else if ((month == 4 && day >= 20) || (month == 5 && day <= 20)) sign="TORO", desc="Stabilità e relax.";
+    else if ((month == 5 && day >= 21) || (month == 6 && day <= 20)) sign="GEMELLI", desc="Comunicazione al top!";
+    else if ((month == 6 && day >= 21) || (month == 7 && day <= 22)) sign="CANCRO", desc="Emozioni profonde.";
+    else if ((month == 7 && day >= 23) || (month == 8 && day <= 22)) sign="LEONE", desc="Protagonista assoluto!";
+    else if ((month == 8 && day >= 23) || (month == 9 && day <= 22)) sign="VERGINE", desc="Organizzazione e successo.";
+    else if ((month == 9 && day >= 23) || (month == 10 && day <= 22)) sign="BILANCIA", desc="Equilibrio e bellezza.";
+    else if ((month == 10 && day >= 23) || (month == 11 && day <= 21)) sign="SCORPIONE", desc="Fascino misterioso.";
+    else if ((month == 11 && day >= 22) || (month == 12 && day <= 21)) sign="SAGITTARIO", desc="Voglia di avventura!";
+    else if ((month == 12 && day >= 22) || (month == 1 && day <= 19)) sign="CAPRICORNO", desc="Determinazione d'acciaio.";
+    else if ((month == 1 && day >= 20) || (month == 2 && day <= 18)) sign="ACQUARIO", desc="Idee brillanti.";
+    else sign="PESCI", desc="Sogni e intuizioni.";
+
+    document.getElementById('horoscope-name').innerText = sign;
+    document.getElementById('horoscope-desc').innerText = desc;
+}
+
+setInterval(updateTime, 1000);
+updateTime();
+updateHoroscope();
+detectUser();
+
+</script>
+
+</body>
+</html>
