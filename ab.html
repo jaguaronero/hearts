@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doppio Speaker Arcobaleno</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:;
+    overflow:auto;
+    font-family:Arial, sans-serif;
+    padding:40px 0;
+}
+
+/* CONTENITORE */
+.wrapper{
+    display:flex;
+    flex-direction:column;
+    gap:60px;
+}
+
+/* OUTER BOX */
+.outer-rainbow-box{
+    position:relative;
+    width:500px;
+    height:400px;
+    padding:4px;
+    border-radius:35px;
+
+    background:linear-gradient(
+        90deg,
+        #ff0000,
+        #ff7b00,
+        #ffee00,
+        #00ff88,
+        #00d9ff,
+        #0044ff,
+        #7a00ff,
+        #ff00c8,
+        #ff0000
+    );
+
+    background-size:500%;
+
+    animation:
+        rainbowOuter 5s linear infinite,
+        glowOuter 2s ease-in-out infinite alternate;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    box-shadow:
+        0 0 20px rgba(255,0,255,0.4),
+        0 0 40px rgba(0,255,255,0.3),
+        0 0 60px rgba(255,255,255,0.2);
+}
+
+.outer-rainbow-box::before{
+    content:"";
+    position:absolute;
+    inset:4px;
+    background:#141414;
+    border-radius:31px;
+}
+
+/* SPEAKERS */
+.speaker{
+    position:absolute;
+    left:400px;
+
+    width:60px;
+    height:60px;
+
+    z-index:9999;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+/* PRIMO SPEAKER */
+.speaker-top{
+    top:63px;
+}
+
+/* SECONDO SPEAKER */
+.speaker-bottom{
+    top:160px;
+}
+
+.speaker-core{
+    width:24px;
+    height:24px;
+    border-radius:50%;
+
+    background:linear-gradient(
+        45deg,
+        red,
+        orange,
+        yellow,
+        lime,
+        cyan,
+        blue,
+        violet
+    );
+
+    background-size:400%;
+
+    animation:
+        rainbow 3s linear infinite,
+        pulseSpeaker 1s infinite ease-in-out;
+
+    box-shadow:
+        0 0 10px rgba(255,0,255,0.6),
+        0 0 25px rgba(0,255,255,0.5);
+}
+
+.wave{
+    position:absolute;
+
+    border:3px solid rgba(255,255,255,0.8);
+    border-radius:50%;
+
+    animation:waveAnim 2s infinite;
+}
+
+.wave1{
+    width:35px;
+    height:35px;
+}
+
+.wave2{
+    width:50px;
+    height:50px;
+    animation-delay:0.5s;
+}
+
+.wave3{
+    width:65px;
+    height:65px;
+    animation-delay:1s;
+}
+
+/* VIDEO BOX */
+.rainbow-box{
+    position:absolute;
+    right:18px;
+    width:430px;
+    height:310px;
+
+    border-radius:28px;
+    overflow:hidden;
+    padding:4px;
+    z-index:2;
+
+    background:linear-gradient(
+        90deg,
+        red, orange, yellow, lime, cyan, blue, violet, red
+    );
+
+    background-size:400%;
+
+    animation:
+        rainbow 3s linear infinite,
+        glowInner 2s ease-in-out infinite alternate;
+
+    box-shadow:
+        0 0 15px rgba(255,0,255,0.5),
+        0 0 35px rgba(0,255,255,0.3);
+}
+
+.rainbow-box::before{
+    content:"";
+    position:absolute;
+    inset:4px;
+    background:#000;
+    border-radius:24px;
+    z-index:1;
+}
+
+.video-container{
+    position:relative;
+    width:100%;
+    height:100%;
+    z-index:2;
+    border-radius:24px;
+    overflow:hidden;
+}
+
+.video-container video{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    display:block;
+    background:#000;
+}
+
+/* BUTTONS */
+.controls{
+    position:absolute;
+    left:18px;
+    top:50%;
+    transform:translateY(-50%);
+    z-index:10;
+
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.control-btn{
+    width:70px;
+    height:70px;
+    border:none;
+    border-radius:20px;
+    color:white;
+    font-weight:bold;
+    font-size:16px;
+    cursor:pointer;
+
+    background:linear-gradient(
+        90deg,
+        red,
+        orange,
+        yellow,
+        lime,
+        cyan,
+        blue,
+        violet,
+        red
+    );
+
+    background-size:400%;
+    animation:rainbow 3s linear infinite;
+
+    box-shadow:
+        0 0 10px rgba(255,0,255,0.5),
+        0 0 20px rgba(0,255,255,0.3);
+}
+
+/* CLOCK */
+.clock-box{
+    position:absolute;
+    bottom:18px;
+    left:18px;
+    z-index:5;
+
+    display:flex;
+    align-items:center;
+    gap:12px;
+
+    padding:8px 10px;
+    border-radius:16px;
+
+    background:rgba(0,0,0,0.45);
+    backdrop-filter:blur(10px);
+
+    border:4px solid transparent;
+
+    background-image:
+        linear-gradient(#111,#111),
+        linear-gradient(
+            90deg,
+            red,
+            orange,
+            yellow,
+            lime,
+            cyan,
+            blue,
+            violet,
+            red
+        );
+
+    background-origin:border-box;
+    background-clip:padding-box, border-box;
+
+    animation:rainbowBorder 3s linear infinite;
+}
+
+.clock{
+    color:white;
+    line-height:1.3;
+}
+
+#time{
+    font-size:20px;
+    font-weight:bold;
+}
+
+#date{
+    font-size:11px;
+    color:#dcdcdc;
+}
+
+/* GO TO MUSIC */
+.go-music{
+    position:absolute;
+    top:52px;
+    left:32%;
+    transform:translateX(-50%);
+
+    z-index:9999;
+
+    font-size:26px;
+    font-weight:bold;
+    letter-spacing:2px;
+
+    background:linear-gradient(
+        90deg,
+        red,
+        orange,
+        yellow,
+        lime,
+        cyan,
+        blue,
+        violet,
+        red
+    );
+
+    background-size:400%;
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    animation:rainbowText 4s linear infinite;
+}
+
+/* LIVE TITLE */
+#liveTitle{
+    position:absolute;
+    top:10px;
+    left:50%;
+    transform:translateX(-50%);
+    width:70%;
+    overflow:hidden;
+    white-space:nowrap;
+
+    color:white;
+    font-weight:bold;
+    font-size:14px;
+
+    z-index:9999;
+
+    background:rgba(0,0,0,0.35);
+    backdrop-filter:blur(8px);
+    border-radius:10px;
+    padding:6px 10px;
+}
+
+#liveText{
+    display:inline-block;
+    padding-left:100%;
+    animation:scrollText 10s linear infinite;
+}
+
+/* LISTENERS */
+#listenersBox{
+    position:absolute;
+    bottom:15px;
+    right:25px;
+
+    z-index:9999;
+    color:white;
+    font-size:13px;
+    font-weight:bold;
+
+    padding:6px 10px;
+    border-radius:10px;
+
+    background:rgba(0,0,0,0.35);
+    backdrop-filter:blur(8px);
+}
+
+/* VOLUME */
+.volume-box{
+    position:absolute;
+    bottom:18px;
+    left:50%;
+    transform:translateX(-50%);
+
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    color:white;
+    font-size:13px;
+
+    padding:6px 10px;
+    border-radius:10px;
+
+    background:rgba(0,0,0,0.35);
+    backdrop-filter:blur(8px);
+}
+
+/* EQUALIZER */
+.equalizer{
+    position:absolute;
+    right:35px;
+    top:300px;
+
+    width:120px;
+    height:35px;
+
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+
+    z-index:9999;
+}
+
+.equalizer span{
+    width:5px;
+    border-radius:10px;
+
+    background:linear-gradient(
+        to top,
+        red,
+        orange,
+        yellow,
+        lime,
+        cyan
+    );
+
+    animation:eq 1s infinite ease-in-out;
+}
+
+.equalizer span:nth-child(1){ height:10px; animation-delay:0s; }
+.equalizer span:nth-child(2){ height:18px; animation-delay:0.1s; }
+.equalizer span:nth-child(3){ height:26px; animation-delay:0.2s; }
+.equalizer span:nth-child(4){ height:15px; animation-delay:0.3s; }
+.equalizer span:nth-child(5){ height:30px; animation-delay:0.4s; }
+.equalizer span:nth-child(6){ height:14px; animation-delay:0.5s; }
+.equalizer span:nth-child(7){ height:24px; animation-delay:0.6s; }
+.equalizer span:nth-child(8){ height:18px; animation-delay:0.7s; }
+.equalizer span:nth-child(9){ height:28px; animation-delay:0.8s; }
+.equalizer span:nth-child(10){ height:12px; animation-delay:0.9s; }
+.equalizer span:nth-child(11){ height:22px; animation-delay:1s; }
+.equalizer span:nth-child(12){ height:16px; animation-delay:1.1s; }
+
+/* --- STILE AGGIUNTO PER LE STELLINE --- */
+.star {
+    position: absolute;
+    background-color: #fff;
+    /* Crea la forma geometrica di una stella perfetta */
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    pointer-events: none; /* Fondamentale per far passare i click sotto ai pulsanti e volume */
+    z-index: 99999; /* Rimane sopra gli altri elementi grafici */
+    transform: translate(-50%, -50%) scale(0);
+    animation: sparkle 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* Animazione delle stelline */
+@keyframes sparkle {
+    0% {
+        transform: translate(-50%, -50%) scale(0) rotate(0deg);
+        opacity: 1;
+        filter: drop-shadow(0 0 4px #fff);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.2) rotate(90deg);
+        background-color: #ffee00; /* Splendore dorato a metà strada */
+        filter: drop-shadow(0 0 8px #ff00c8);
+    }
+    100% {
+        /* Spostamento casuale impostato da JavaScript */
+        transform: translate(var(--mx), var(--my)) scale(0) rotate(180deg);
+        opacity: 0;
+    }
+}
+
+/* ANIMAZIONI */
+
+@keyframes pulseSpeaker{
+    0%{ transform:scale(1); }
+    50%{ transform:scale(1.25); }
+    100%{ transform:scale(1); }
+}
+
+@keyframes waveAnim{
+    0%{
+        transform:scale(0.7);
+        opacity:1;
+    }
+
+    100%{
+        transform:scale(1.4);
+        opacity:0;
+    }
+}
+
+@keyframes eq{
+    0%{
+        transform:scaleY(0.4);
+        opacity:0.5;
+    }
+
+    50%{
+        transform:scaleY(1.3);
+        opacity:1;
+    }
+
+    100%{
+        transform:scaleY(0.4);
+        opacity:0.5;
+    }
+}
+
+@keyframes glowOuter{
+    from{
+        box-shadow:
+            0 0 20px rgba(255,0,255,0.4),
+            0 0 40px rgba(0,255,255,0.3);
+    }
+
+    to{
+        box-shadow:
+            0 0 35px rgba(255,0,255,0.8),
+            0 0 70px rgba(0,255,255,0.6);
+    }
+}
+
+@keyframes glowInner{
+    from{
+        box-shadow:
+            0 0 15px rgba(255,0,255,0.5),
+            0 0 35px rgba(0,255,255,0.3);
+    }
+
+    to{
+        box-shadow:
+            0 0 30px rgba(255,0,255,0.9),
+            0 0 60px rgba(0,255,255,0.7);
+    }
+}
+
+@keyframes rainbowText{
+    0%{ background-position:0%; }
+    100%{ background-position:400%; }
+}
+
+@keyframes scrollText{
+    0%{ transform:translateX(0); }
+    100%{ transform:translateX(-100%); }
+}
+
+@keyframes rainbow{
+    0%{ background-position:0%; }
+    100%{ background-position:400%; }
+}
+
+@keyframes rainbowOuter{
+    0%{ background-position:0%; }
+    100%{ background-position:500%; }
+}
+
+@keyframes rainbowBorder{
+    0%{ background-position:0%; }
+    100%{ background-position:300%; }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+    <audio id="radioStream">
+        <source src="https://sp4.server89.com:7027/stream" type="audio/mpeg">
+    </audio>
+
+    <div class="outer-rainbow-box" id="rainbowPlayer">
+
+        <div class="speaker speaker-top">
+            <div class="speaker-core"></div>
+
+            <span class="wave wave1"></span>
+            <span class="wave wave2"></span>
+            <span class="wave wave3"></span>
+        </div>
+
+        <div class="speaker speaker-bottom">
+            <div class="speaker-core"></div>
+
+            <span class="wave wave1"></span>
+            <span class="wave wave2"></span>
+            <span class="wave wave3"></span>
+        </div>
+
+        <div class="controls">
+            <button class="control-btn" onclick="playVideo(); play();">PLAY</button>
+            <button class="control-btn" onclick="stopVideo(); stop();">STOP</button>
+        </div>
+
+        <div class="rainbow-box">
+            <div class="video-container">
+                <video id="myVideo" autoplay muted loop playsinline>
+                    <source src="https://i.imgur.com/irdRrG7.mp4">
+                </video>
+            </div>
+        </div>
+
+        <div class="clock-box">
+            <div class="clock">
+                <div id="time">00:00:00</div>
+                <div id="date">Caricamento...</div>
+            </div>
+        </div>
+
+        <div class="go-music">
+            Go To Music
+        </div>
+
+        <div id="liveTitle">
+            <div id="liveText">🔴 LIVE: caricamento...</div>
+        </div>
+
+        <div id="listenersBox">👥 0</div>
+
+        <div class="equalizer">
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+        </div>
+
+        <div class="volume-box">
+            🔊
+            <input type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.5"
+                oninput="changeVolume(this.value)">
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const video = document.getElementById("myVideo");
+const stream = document.getElementById("radioStream");
+
+function playVideo(){
+    video.play();
+}
+
+function stopVideo(){
+    video.pause();
+    video.currentTime = 0;
+}
+
+function play(){
+    stream.play();
+}
+
+function stop(){
+    stream.pause();
+    stream.currentTime = 0;
+}
+
+function changeVolume(value){
+    stream.volume = value;
+}
+
+/* CLOCK */
+function aggiornaOra(){
+
+    const now = new Date();
+
+    const giorni = [
+        "Domenica","Lunedì","Martedì",
+        "Mercoledì","Giovedì","Venerdì","Sabato"
+    ];
+
+    const mesi = [
+        "Gennaio","Febbraio","Marzo",
+        "Aprile","Maggio","Giugno",
+        "Luglio","Agosto","Settembre",
+        "Ottobre","Novembre","Dicembre"
+    ];
+
+    document.getElementById("time").innerHTML =
+        String(now.getHours()).padStart(2,'0') + ":" +
+        String(now.getMinutes()).padStart(2,'0') + ":" +
+        String(now.getSeconds()).padStart(2,'0');
+
+    document.getElementById("date").innerHTML =
+        giorni[now.getDay()] + " " +
+        now.getDate() + " " +
+        mesi[now.getMonth()] + " " +
+        now.getFullYear();
+}
+
+setInterval(aggiornaOra,1000);
+aggiornaOra();
+
+/* LIVE TITLE */
+async function loadTitle(){
+
+    try{
+
+        const res = await fetch("https://sp4.server89.com:7027/stats?json=1");
+        const data = await res.json();
+
+        const title =
+            data.songtitle ||
+            data.title ||
+            data.now_playing ||
+            "LIVE STREAM";
+
+        const listeners =
+            data.listeners ||
+            data.currentlisteners ||
+            0;
+
+        document.getElementById("liveText").innerText =
+            "🔴 LIVE: " + title;
+
+        document.getElementById("listenersBox").innerText =
+            "👥 " + listeners;
+
+    }catch(e){
+
+        console.log("errore stats");
+
+    }
+
+}
+
+setInterval(loadTitle, 5000);
+loadTitle();
+
+
+/* --- LOGICA DELLA SCIA DI STELLE ABBINATA AL PLAYER --- */
+const playerBox = document.getElementById('rainbowPlayer');
+
+playerBox.addEventListener('mousemove', (e) => {
+    // Calcola le coordinate esatte all'interno del box del player
+    const rect = playerBox.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    // Crea la stellina HTML
+    const star = document.createElement('div');
+    star.classList.add('star');
+
+    // Assegna la posizione iniziale sotto il cursore
+    star.style.left = `${x}px`;
+    star.style.top = `${y}px`;
+
+    // Crea un piccolo spostamento casuale finale per l'effetto scintillio (esplosione)
+    const moveX = (Math.random() - 0.5) * 45;
+    const moveY = (Math.random() - 0.5) * 45;
+    star.style.setProperty('--mx', `${moveX}px`);
+    star.style.setProperty('--my', `${moveY}px`);
+
+    // Dimensione casuale delle stelle (da un minimo di 6px a un massimo di 14px)
+    const size = Math.random() * 8 + 6;
+    star.style.width = `${size}px`;
+    star.style.height = `${size}px`;
+
+    // Inserisce la stellina nel player
+    playerBox.appendChild(star);
+
+    // Distrugge la stellina dopo 700 millisecondi per salvaguardare la RAM
+    setTimeout(() => {
+        star.remove();
+    }, 700);
+});
+
+</script>
+
+</body>
+</html>
