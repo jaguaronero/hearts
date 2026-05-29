@@ -1,6 +1,6 @@
 <html lang="it"><head>
 <meta charset="UTF-8">
-<title>29</title>
+<title>jaguarluna</title>
 <style>
 body{
   margin:0;
@@ -93,19 +93,24 @@ body{
   z-index:0;
 }
 
-/* ===== CONTENITORE FOTO + TESTO ===== */
+/* ===== CONTENITORE CONTENUTO ANIMATO ===== */
 .center-box{
   position:relative;
   width:420px;
+  height:420px; /* Impostata altezza quadrata ottimale per la pagina animata */
   max-width:90%;
   animation: fadeLoop 6s ease-in-out infinite;
   filter:drop-shadow(0 0 25px rgba(255,0,0,.4));
 }
 
-.center-box img{
+/* Stile per incorporare la pagina animata esterna */
+.center-box iframe{
   width:100%;
+  height:100%;
+  border:none;
   display:block;
   border-radius:12px;
+  background:transparent;
 }
 
 /* ===== TESTO JAGUARO 3D ARGENTO ===== */
@@ -128,6 +133,7 @@ body{
     0 6px 10px rgba(0,0,0,.8);
 
   pointer-events:none;
+  z-index:3; /* Portato in primo piano sopra l'iframe */
 }
 
 /* ===== FADE LOOP ===== */
@@ -160,16 +166,15 @@ body{
     <div class="video-text">GO_TO_MUSIC</div>
   </div>
 
-  <!-- CENTRO FOTO + TESTO -->
+  <!-- CENTRO PAGINA ANIMATA + TESTO -->
   <div class="center-area">
     <div class="center-box">
-      <img src="https://xatimg.com/image/kyywXXGAdngs.png" alt="center">
+      <!-- Inserita la pagina html animata tramite iframe -->
+      <iframe src="https://jaguaronero.github.io/hearts/name.html" scrolling="no"></iframe>
       <div class="center-title"></div>
     </div>
   </div>
 
 </div>
-
-
 
 </body></html>
