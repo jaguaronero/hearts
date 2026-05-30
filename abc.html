@@ -209,11 +209,41 @@ body{
     background:;
 }
 
+/* SCRITTA FATY (SINISTRA) */
+.welcome-faty {
+    position:absolute;
+    left:85px;              /* Spostata più a destra (prima era 18px) */
+    top:65px;
+    width:90px;             /* Allargata leggermente per contenere il font più grande */
+    z-index:10;
+    font-size:19px;         /* Size aumentata (prima era 14px) */
+    font-weight:bold;
+    text-align:center;
+    line-height:1.4;
+    letter-spacing:1px;
+
+    background:linear-gradient(
+        90deg,
+        red,
+        orange,
+        yellow,
+        lime,
+        cyan,
+        blue,
+        violet,
+        red
+    );
+    background-size:400%;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation:rainbowText 4s linear infinite;
+}
+
 /* BUTTONS */
 .controls{
     position:absolute;
-    left:18px;
-    top:50%;
+    left:32px;              /* Spostati leggermente a destra per allinearsi alla scritta */
+    top:58%;
     transform:translateY(-50%);
     z-index:10;
 
@@ -507,6 +537,10 @@ body{
     </audio>
 
     <div class="outer-rainbow-box">
+
+        <div class="welcome-faty">
+            Dj FATY <br>Obrigado a todos.
+        </div>
 
         <div class="speaker speaker-top">
             <div class="speaker-core"></div>
