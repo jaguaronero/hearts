@@ -83,10 +83,7 @@ body{
   font-family:Trebuchet MS;
   font-weight:bold;
   z-index:2;
-  background:linear-gradient(
-    90deg,
-    red,orange,yellow,lime,cyan,blue,violet,red
-  );
+  background:linear-gradient(90deg,red,orange,yellow,lime,cyan,blue,violet,red);
   background-size:400% 100%;
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
@@ -112,7 +109,7 @@ body{
   z-index:0;
 }
 
-/* ===== CONTENITORE CONTENUTO ===== */
+/* ===== CONTENITORE ===== */
 .center-box{
   position:relative;
   width:420px;
@@ -176,7 +173,7 @@ body{
   <!-- VIDEO SINISTRO -->
   <div class="video-wrapper left">
     <video class="side-video" autoplay loop muted playsinline>
-      <source src="https://jaguaronero.github.io/hearts/29.mp4">
+      <source src="https://jaguaronero.github.io/hearts/30.mp4">
     </video>
     <div class="video-text">GO_TO_MUSIC</div>
   </div>
@@ -184,7 +181,7 @@ body{
   <!-- VIDEO DESTRO -->
   <div class="video-wrapper right">
     <video class="side-video" autoplay loop muted playsinline>
-      <source src="https://jaguaronero.github.io/hearts/29.mp4">
+      <source src="https://jaguaronero.github.io/hearts/30.mp4">
     </video>
     <div class="video-text">GO_TO_MUSIC</div>
   </div>
@@ -192,11 +189,7 @@ body{
   <!-- CENTRO -->
   <div class="center-area">
     <div class="center-box">
-      <iframe
-        src="https://jaguaronero.github.io/hearts/name.html"
-        scrolling="no">
-      </iframe>
-
+      <iframe src="https://jaguaronero.github.io/hearts/name.html" scrolling="no"></iframe>
       <div class="center-title"></div>
     </div>
   </div>
@@ -232,44 +225,24 @@ function drawParticles(){
 
   ctx.clearRect(0,0,canvas.width,canvas.height);
 
-  particles.forEach((p,index)=>{
+  particles.forEach((p)=>{
 
     p.x += p.speedX;
     p.y += p.speedY;
     p.hue += 1;
 
-    if(p.x<0 || p.x>canvas.width) p.speedX*=-1;
-    if(p.y<0 || p.y>canvas.height) p.speedY*=-1;
+    if(p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+    if(p.y < 0 || p.y > canvas.height) p.speedY *= -1;
 
     const color = `hsl(${p.hue},100%,60%)`;
 
     ctx.beginPath();
     ctx.arc(p.x,p.y,p.radius,0,Math.PI*2);
+
     ctx.fillStyle = color;
     ctx.shadowBlur = 25;
     ctx.shadowColor = color;
     ctx.fill();
-
-    for(let j=index+1;j<particles.length;j++){
-
-      const p2 = particles[j];
-      const dx = p.x-p2.x;
-      const dy = p.y-p2.y;
-      const dist = Math.sqrt(dx*dx+dy*dy);
-
-      if(dist<120){
-
-        ctx.beginPath();
-        ctx.moveTo(p.x,p.y);
-        ctx.lineTo(p2.x,p2.y);
-
-        ctx.strokeStyle =
-          `hsla(${(p.hue+p2.hue)/2},100%,60%,${1-dist/120})`;
-
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      }
-    }
   });
 
   requestAnimationFrame(drawParticles);
@@ -279,4 +252,5 @@ drawParticles();
 </script>
 
 </body>
+</html>
 </html>
