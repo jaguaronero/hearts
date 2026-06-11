@@ -1,387 +1,281 @@
 <!DOCTYPE html>
-
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JAGUARLUNA</title>
+<title>jaguarluna</title>
 
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
-
 body{
-background:;
-overflow:hidden;
-height:100vh;
-font-family:Trebuchet MS,sans-serif;
-display:flex;
-justify-content:center;
-align-items:center;
+  margin:0;
+  background:transparent;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  overflow:hidden;
 }
 
-/* CANVAS PARTICELLE */
-
-#particles{
-position:fixed;
-inset:0;
-z-index:-100;
+/* ===== PARTICELLE RGB ===== */
+#rgbParticles{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:-1;
+  pointer-events:none;
 }
-
-/* CONTAINER */
 
 .container{
-position:relative;
-width:1308px;
-height:484px;
-max-width:95vw;
+  position:relative;
+  width:1308px;
+  height:484px;
 }
 
-/* VIDEO BOX */
-
+/* ===== CONTENITORE VIDEO ===== */
 .video-wrapper{
-position:absolute;
-width:270px;
-height:484px;
-border-radius:20px;
-padding:5px;
-overflow:hidden;
-background:
-conic-gradient(
-red,
-orange,
-yellow,
-lime,
-cyan,
-blue,
-violet,
-red
-);
-animation:borderSpin 4s linear infinite;
-box-shadow:
-0 0 20px cyan,
-0 0 40px magenta;
+  position:absolute;
+  width:270px;
+  height:484px;
+  overflow:hidden;
+  z-index:1;
+  background:transparent;
+  border-radius:20px;
 }
 
-@keyframes borderSpin{
+.left{left:0}
+.right{right:0}
 
-0%{
-filter:hue-rotate(0deg);
+/* ===== BORDI ===== */
+.video-wrapper::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  padding:4px;
+  border-radius:20px;
+  background:conic-gradient(
+    red,orange,yellow,lime,cyan,blue,violet,red
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  filter:drop-shadow(0 0 10px rgba(255,0,255,.7));
+  pointer-events:none;
 }
 
-100%{
-filter:hue-rotate(360deg);
-}
-
-}
-
-.left{
-left:0;
-}
-
-.right{
-right:0;
-}
-
-/* INTERNO VIDEO */
-
-.video-inner{
-width:100%;
-height:100%;
-background:#000;
-border-radius:16px;
-overflow:hidden;
-position:relative;
-}
-
+/* ===== VIDEO ===== */
 .side-video{
-width:100%;
-height:100%;
-object-fit:cover;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:16px;
 }
 
-/* TESTO RGB */
-
+/* ===== TESTO ARCOBALENO VIDEO ===== */
 .video-text{
-position:absolute;
-bottom:10px;
-left:50%;
-transform:translateX(-50%);
-
-font-size:24px;
-font-weight:bold;
-
-background:linear-gradient(
-90deg,
-red,
-orange,
-yellow,
-lime,
-cyan,
-blue,
-violet,
-red
-);
-
-background-size:400%;
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-
-animation:textMove 3s linear infinite;
-
-text-decoration:none;
-cursor:pointer;
+  position:absolute;
+  bottom:8px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:25px;
+  font-family:Trebuchet MS;
+  font-weight:bold;
+  z-index:2;
+  background:linear-gradient(
+    90deg,
+    red,orange,yellow,lime,cyan,blue,violet,red
+  );
+  background-size:400% 100%;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:rainbowText 3s linear infinite;
 }
 
-@keyframes textMove{
-
-0%{
-background-position:0%;
+@keyframes rainbowText{
+  0%{background-position:0%}
+  100%{background-position:100%}
 }
 
-100%{
-background-position:400%;
-}
-
-}
-
-/* CENTRO */
-
+/* ===== AREA CENTRALE ===== */
 .center-area{
-position:absolute;
-left:290px;
-right:290px;
-top:0;
-bottom:0;
-
-display:flex;
-justify-content:center;
-align-items:center;
+  position:absolute;
+  left:280px;
+  right:280px;
+  top:0;
+  bottom:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  pointer-events:none;
+  z-index:0;
 }
 
+/* ===== CONTENITORE CONTENUTO ===== */
 .center-box{
-position:relative;
-width:420px;
-height:420px;
-
-animation:centerFade 6s infinite;
-
-filter:
-drop-shadow(0 0 25px red)
-drop-shadow(0 0 45px cyan);
+  position:relative;
+  width:420px;
+  height:420px;
+  max-width:90%;
+  animation:fadeLoop 6s ease-in-out infinite;
+  filter:drop-shadow(0 0 25px rgba(255,0,0,.4));
 }
 
+/* ===== IFRAME ===== */
 .center-box iframe{
-width:100%;
-height:100%;
-border:none;
-border-radius:15px;
-background:transparent;
+  width:100%;
+  height:100%;
+  border:none;
+  display:block;
+  border-radius:12px;
+  background:transparent;
 }
 
+/* ===== TESTO ===== */
 .center-title{
-position:absolute;
-bottom:15px;
-left:50%;
-transform:translateX(-50%);
+  position:absolute;
+  bottom:12px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:38px;
+  font-family:Trebuchet MS;
+  font-weight:900;
+  letter-spacing:3px;
+  color:#d8d8d8;
 
-font-size:38px;
-font-weight:900;
-letter-spacing:4px;
+  text-shadow:
+    0 1px 0 #fff,
+    0 2px 0 #cfcfcf,
+    0 3px 0 #b5b5b5,
+    0 4px 0 #9b9b9b,
+    0 6px 10px rgba(0,0,0,.8);
 
-color:white;
-
-text-shadow:
-0 0 10px #fff,
-0 0 20px cyan,
-0 0 40px cyan,
-0 0 80px cyan;
+  pointer-events:none;
+  z-index:3;
 }
 
-@keyframes centerFade{
-
-0%{
-opacity:0;
-transform:scale(.9);
+/* ===== FADE ===== */
+@keyframes fadeLoop{
+  0%{opacity:0}
+  20%{opacity:0}
+  50%{opacity:1}
+  80%{opacity:0}
+  100%{opacity:0}
 }
-
-20%{
-opacity:1;
-transform:scale(1);
-}
-
-70%{
-opacity:1;
-transform:scale(1);
-}
-
-100%{
-opacity:0;
-transform:scale(1.1);
-}
-
-}
-
-/* RESPONSIVE */
-
-@media(max-width:1100px){
-
-.video-wrapper{
-width:180px;
-height:350px;
-}
-
-.center-area{
-left:190px;
-right:190px;
-}
-
-.center-box{
-width:320px;
-height:320px;
-}
-
-.center-title{
-font-size:26px;
-}
-
-}
-
 </style>
-
 </head>
 
 <body>
 
-<canvas id="particles"></canvas>
+<!-- SFONDO PARTICELLE RGB -->
+<canvas id="rgbParticles"></canvas>
 
 <div class="container">
 
-<div class="video-wrapper left">
+  <!-- VIDEO SINISTRO -->
+  <div class="video-wrapper left">
+    <video class="side-video" autoplay loop muted playsinline>
+      <source src="https://jaguaronero.github.io/hearts/29.mp4">
+    </video>
+    <div class="video-text">GO_TO_MUSIC</div>
+  </div>
 
-<div class="video-inner">
+  <!-- VIDEO DESTRO -->
+  <div class="video-wrapper right">
+    <video class="side-video" autoplay loop muted playsinline>
+      <source src="https://jaguaronero.github.io/hearts/29.mp4">
+    </video>
+    <div class="video-text">GO_TO_MUSIC</div>
+  </div>
 
-<video class="side-video" autoplay muted loop playsinline>
-<source src="https://jaguaronero.github.io/hearts/30.mp4" type="video/mp4">
-</video>
+  <!-- CENTRO -->
+  <div class="center-area">
+    <div class="center-box">
+      <iframe
+        src="https://jaguaronero.github.io/hearts/name.html"
+        scrolling="no">
+      </iframe>
 
-<a href="https://jaguaronero.github.io/hearts/"
-class="video-text">
-GO_TO_MUSIC </a>
-
-</div>
-</div>
-
-<div class="video-wrapper right">
-
-<div class="video-inner">
-
-<video class="side-video" autoplay muted loop playsinline>
-<source src="https://jaguaronero.github.io/hearts/30.mp4" type="video/mp4">
-</video>
-
-<a href="https://jaguaronero.github.io/hearts/"
-class="video-text">
-GO_TO_MUSIC </a>
-
-</div>
-</div>
-
-<div class="center-area">
-
-<div class="center-box">
-
-<iframe
-src="https://jaguaronero.github.io/hearts/name.html"
-scrolling="no">
-</iframe>
-
-<div class="center-title">
-FERNY
-</div>
-
-</div>
-
-</div>
+      <div class="center-title"></div>
+    </div>
+  </div>
 
 </div>
 
 <script>
+const canvas = document.getElementById("rgbParticles");
+const ctx = canvas.getContext("2d");
 
-/* PARTICELLE RGB */
+function resizeCanvas(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
 
-const canvas=document.getElementById("particles");
-const ctx=canvas.getContext("2d");
+const particles = [];
+const particleCount = 120;
 
-function resize(){
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
+for(let i=0;i<particleCount;i++){
+  particles.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    radius:2+Math.random()*5,
+    speedX:(Math.random()-0.5)*1.5,
+    speedY:(Math.random()-0.5)*1.5,
+    hue:Math.random()*360
+  });
 }
 
-resize();
+function drawParticles(){
 
-window.addEventListener("resize",resize);
+  ctx.clearRect(0,0,canvas.width,canvas.height);
 
-const particles=[];
+  particles.forEach((p,index)=>{
 
-for(let i=0;i<200;i++){
+    p.x += p.speedX;
+    p.y += p.speedY;
+    p.hue += 1;
 
-particles.push({
+    if(p.x<0 || p.x>canvas.width) p.speedX*=-1;
+    if(p.y<0 || p.y>canvas.height) p.speedY*=-1;
 
-x:Math.random()*canvas.width,
-y:Math.random()*canvas.height,
+    const color = `hsl(${p.hue},100%,60%)`;
 
-r:Math.random()*2+1,
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.radius,0,Math.PI*2);
+    ctx.fillStyle = color;
+    ctx.shadowBlur = 25;
+    ctx.shadowColor = color;
+    ctx.fill();
 
-dx:(Math.random()-0.5)*1,
-dy:(Math.random()-0.5)*1,
+    for(let j=index+1;j<particles.length;j++){
 
-h:Math.random()*360
+      const p2 = particles[j];
+      const dx = p.x-p2.x;
+      const dy = p.y-p2.y;
+      const dist = Math.sqrt(dx*dx+dy*dy);
 
-});
+      if(dist<120){
 
+        ctx.beginPath();
+        ctx.moveTo(p.x,p.y);
+        ctx.lineTo(p2.x,p2.y);
+
+        ctx.strokeStyle =
+          `hsla(${(p.hue+p2.hue)/2},100%,60%,${1-dist/120})`;
+
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    }
+  });
+
+  requestAnimationFrame(drawParticles);
 }
 
-function draw(){
-
-ctx.clearRect(0,0,canvas.width,canvas.height);
-
-particles.forEach(p=>{
-
-p.x+=p.dx;
-p.y+=p.dy;
-
-if(p.x<0||p.x>canvas.width)p.dx*=-1;
-if(p.y<0||p.y>canvas.height)p.dy*=-1;
-
-p.h+=0.5;
-
-ctx.beginPath();
-
-ctx.fillStyle=
-`hsla(${p.h},100%,60%,0.9)`;
-
-ctx.shadowBlur=15;
-
-ctx.shadowColor=
-`hsl(${p.h},100%,60%)`;
-
-ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-
-ctx.fill();
-
-});
-
-requestAnimationFrame(draw);
-
-}
-
-draw();
-
+drawParticles();
 </script>
 
 </body>
