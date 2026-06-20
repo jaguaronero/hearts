@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caduta di Cuori Speciali</title>
+    <style>
+        /* Sfondo completamente trasparente */
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: transparent; /* Trasparenza assoluta */
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Contenitore dei cuori */
+        .heart-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Rende il livello cliccabile in trasparenza */
+            z-index: 9999;
+        }
+
+        /* Stile base dei cuori fluttuanti */
+        .heart {
+            position: absolute;
+            user-select: none;
+            opacity: 0.85;
+            pointer-events: none;
+            transition: filter 0.3s;
+            /* Leggero bagliore per dare profondità */
+            filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
+        }
+    </style>
+</head>
+<body>
+
+    <div class="heart-container" id="container"></div>
+
+    <script>
+        const container = document.getElementById('container');
+        const heartCount = 35; // Numero di cuori sullo schermo
+
+        // L'elenco esatto dei tuoi cuori speciali
+        const heartTypes = ['💖', '💙', '🤍', '💜', '💛', '💚', '💘', '💞'];
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            
+            // Sceglie un cuore casuale dalla tua lista
+            const randomHeart = heartTypes[Math.floor(Math.random() * heartTypes.length)];
+            heart.innerHTML = randomHeart;
+
+            // Posizionamento e dinamica
+            let startX = Math.random() * window.innerWidth;
+            let currentY = -50; 
+            
+            const speedY = 0.8 + Math.random() * 2; // Velocità di caduta morbida
+            const size = 20 + Math.random() * 25;   // Dimensione variabile
+            
+            // Oscillazione e cambi di direzione
+            let angle = Math.random() * Math.PI * 2;
+            const speedX = 0.01 + Math.random() * 0.02; 
+            const amplitude = 0.8 + Math.random() * 1.5; 
+
+            heart.style.fontSize = `${size}px`;
+
+            function updatePosition() {
+                currentY += speedY; 
+                angle += speedX; 
+                
+                // Movimento oscillatorio continuo (cambio direzione a destra e sinistra)
+                startX += Math.sin(angle) * amplitude; 
+
+                heart.style.top = currentY + 'px';
+                heart.style.left = startX + 'px';
+
+                // Se esce dal fondo dello schermo, si rigenera dall'alto
+                if (currentY > window.innerHeight) {
+                    heart.remove();
+                    createHeart();
+                } else {
+                    requestAnimationFrame(updatePosition);
+                }
+            }
+
+            container.appendChild(heart);
+            requestAnimationFrame(updatePosition);
+        }
+
+        // Avvio scaglionato per distribuire i cuori nel tempo
+        for (let i = 0; i < heartCount; i++) {
+            setTimeout(createHeart, i * 280);
+        }
+    </script>
+</body>
+</html>
