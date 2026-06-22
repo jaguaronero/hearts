@@ -43,8 +43,8 @@
     .testo-dinamico-video { margin-bottom: 25px; font-family: 'Arial Black', sans-serif; font-size: 16px; color: #fff; text-transform: uppercase; letter-spacing: 2px; z-index: 5; background: rgba(0, 0, 0, 0.5); padding: 10px 20px; border-radius: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); box-shadow: 0 0 15px rgba(0,0,0,0.5); }
     .side-video { width: 100%; height: 100%; object-fit: cover; opacity: 1; border-radius: 22px; z-index: 1; position: absolute; top: 0; left: 0; }
     
-    /* MODIFICA: Bottone fisso al limite superiore ma centrato rispetto al rettangolo di destra */
-    .btn-ascolta { position: fixed; top: 15px; right: 185px; transform: translateX(50%); background: rgba(0, 0, 0, 0.9); border: 2px solid #00ffff; border-radius: 8px; padding: 6px 14px; color: white; font-family: 'Arial Black', sans-serif; font-size: 12px; cursor: pointer; text-transform: uppercase; box-shadow: 0 0 10px rgba(0, 255, 255, 0.4); transition: all 0.3s ease; z-index: 9999; }
+    /* MODIFICA: Bottone fisso portato leggermente più in basso (top: 55px) e centrato al rettangolo di destra */
+    .btn-ascolta { position: fixed; top: 55px; right: 185px; transform: translateX(50%); background: rgba(0, 0, 0, 0.9); border: 2px solid #00ffff; border-radius: 8px; padding: 6px 14px; color: white; font-family: 'Arial Black', sans-serif; font-size: 12px; cursor: pointer; text-transform: uppercase; box-shadow: 0 0 10px rgba(0, 255, 255, 0.4); transition: all 0.3s ease; z-index: 9999; }
     .btn-ascolta:hover { background: rgba(0, 255, 255, 0.2); transform: translateX(50%) scale(1.05); }
     
     #sblocco-audio-click { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 99998; background: transparent; cursor: pointer; }
@@ -92,20 +92,33 @@
       }
     });
 
+    /* MODIFICA: Geolocalizzazione dinamica PC con fallback automatico su IP */
     function ottieniCittaGeolocal() {
       const cittaElement = document.getElementById('citta-visitatore');
+      
+      function usaGeolocalizzazioneIP() {
+        fetch('https://ipapi.co/json/')
+          .then(res => res.json())
+          .then(data => {
+            cittaElement.innerText = data.city || "Mondo";
+          })
+          .catch(() => { cittaElement.innerText = "Mondo"; });
+      }
+
       if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
             fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}&zoom=10&addressdetails=1`)
               .then(res => res.json())
               .then(data => {
-                cittaElement.innerText = data.address.city || data.address.town || "Mondo";
+                cittaElement.innerText = data.address.city || data.address.town || data.address.village || "Mondo";
               })
-              .catch(() => { cittaElement.innerText = "Mondo"; });
+              .catch(() => { usaGeolocalizzazioneIP(); });
           },
-          () => { cittaElement.innerText = "Mondo"; }
+          () => { usaGeolocalizzazioneIP(); }
         );
+      } else {
+        usaGeolocalizzazioneIP();
       }
     }
 
@@ -139,7 +152,7 @@
 
       if (saluto !== lastSaluto) {
         document.getElementById('saluto-fisso').innerText = saluto;
-        testoSottoVideo.innerText = saluto + "!";
+        testoSottoVideo.innerText = parseInt(saluto) ? saluto : saluto + "!";
         lastSaluto = saluto;
         videoSource.src = videoUrl;
         videoRagazze.load();
