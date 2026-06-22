@@ -177,12 +177,11 @@
       if (hour >= 6 && hour < 12) { saluto = "BUONGIORNO"; videoUrl = "https://i.imgur.com/dRXFuYY.mp4"; }
       else if (hour >= 12 && hour < 18) { saluto = "BUON POMERIGGIO"; videoUrl = "https://i.imgur.com/s0tGoNn.mp4"; }
       else if (hour >= 18 && hour < 24) { saluto = "BUONASERA"; videoUrl = "https://i.imgur.com/c4FPKDZ.mp4"; }
-      else {自由 = "BUON ASCOLTO"; videoUrl = "https://i.imgur.com/SXKPrwy.mp4"; saluto = "BUON ASCOLTO"; }
+      else { saluto = "BUON ASCOLTO"; videoUrl = "https://i.imgur.com/SXKPrwy.mp4"; }
 
       if (saluto !== lastSaluto) {
         document.getElementById('saluto-fisso').innerText = saluto;
-        testoSottoVideo.innerText = parseInt(saluto) ? saluto : saluto + "!";
-        lastSaluto =自由 !== "" ? saluto : saluto; 
+        testoSottoVideo.innerText = saluto + "!";
         lastSaluto = saluto;
         videoSource.src = videoUrl;
         videoRagazze.load();
