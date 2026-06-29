@@ -32,13 +32,13 @@
             pointer-events: none;
         }
 
-        /* GRUPPO CENTRALE (Abbassato alla posizione originale) */
+        /* GRUPPO CENTRALE (Abbassato ancora un po' di posizione) */
         .centro-layout {
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 80px; /* Riporta i rettangoli giù nella loro posizione originale */
+            margin-top: 130px; /* Sposta i rettangoli ancora più giù */
         }
 
         /* CONTENITORE PRINCIPALE DEI RETTANGOLI */
@@ -181,7 +181,7 @@
 
         /* Responsive Mobile */
         @media (max-width: 768px) {
-            .centro-layout { margin-top: 40px; }
+            .centro-layout { margin-top: 70px; }
             .marquee-text { font-size: 20px; }
             .rettangolo { width: 130px; height: 260px; }
             .rettangolo-wrapper { width: 130px; height: 260px; }
