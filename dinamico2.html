@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overlay Arcobaleno con Media Dinamici e Particelle</title>
+    <style>
+        /* SFONDO TRASPARENTE */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: transparent; /* Trasparente per overlay OBS/Streaming */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; 
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            box-sizing: border-box;
+            padding: 30px 0;
+        }
+
+        /* CANVAS PER PARTICELLE RGB */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* GRUPPO CENTRALE (Abbassato ancora un po' di posizione) */
+        .centro-layout {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 130px; /* Sposta i rettangoli ancora più giù */
+        }
+
+        /* CONTENITORE PRINCIPALE DEI RETTANGOLI */
+        .container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0 10%;
+            box-sizing: border-box;
+        }
+
+        /* STRUTTURA DI SUPPORTO PER IL RETTANGOLO SX */
+        .rettangolo-wrapper {
+            position: relative;
+            width: 280px;
+            height: 480px;
+        }
+
+        /* ====================================================
+           TESTO SCORREVOLE ARCOBALENO (SOPRA RETTANGOLO SX)
+        ==================================================== */
+        .marquee-wrapper {
+            position: absolute;
+            bottom: 100%; /* Posizionato esattamente sopra il rettangolo */
+            left: 0;
+            width: 280px;  /* Stessa larghezza del rettangolo */
+            margin-bottom: 25px; /* Distanza dal rettangolo */
+            overflow: hidden;
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+        .marquee-text {
+            display: inline-block;
+            font-size: 34px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #00ffff, #0000ff, #8b00ff, #ff0000);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: scorrimentoASinistra 12s linear infinite, flussoColoriTesto 4s linear infinite;
+        }
+
+        @keyframes scorrimentoASinistra {
+            0% { transform: translate3d(280px, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+
+        /* ====================================================
+           RETTANGOLI - MISURE ORIGINALI (280x480)
+        ==================================================== */
+        .rettangolo {
+            width: 280px;
+            height: 480px;
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 30px rgba(255, 0, 128, 0.2), 0 0 60px rgba(0, 255, 255, 0.1);
+        }
+
+        /* Bordo Arcobaleno Rotante */
+        .rettangolo::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(#ff0000, #ff7f00, #ffff00, #00ff00, #00ffff, #0000ff, #8b00ff, #ff0000);
+            animation: ruotaArcobaleno 4s linear infinite;
+            z-index: 1;
+        }
+
+        /* Maschera interna effetto vetro */
+        .rettangolo::after {
+            content: '';
+            position: absolute;
+            top: 4px; left: 4px; right: 4px; bottom: 4px;
+            background: rgba(10, 10, 25, 0.6); 
+            border-radius: 12px;
+            z-index: 2;
+            backdrop-filter: blur(4px);
+        }
+
+        /* Contenuto multimediale interno */
+        .rettangolo img, .rettangolo video {
+            position: absolute;
+            top: 4px; left: 4px;
+            width: calc(100% - 8px);
+            height: calc(100% - 8px);
+            object-fit: cover; 
+            border-radius: 12px;
+            z-index: 3;
+        }
+
+        @keyframes ruotaArcobaleno {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ====================================================
+           SCRITTA "GO TO MUSIC"
+        ==================================================== */
+        .music-link-container {
+            z-index: 10;
+            margin-top: 10px;
+        }
+
+        .go-to-music {
+            font-size: 42px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            text-decoration: none;
+            display: inline-block;
+            background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #00ffff, #0000ff, #8b00ff, #ff0000);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.7)) drop-shadow(0 0 20px rgba(255, 0, 128, 0.5));
+            animation: flussoColoriTesto 4s linear infinite, pulsazioneNeon 2s ease-in-out infinite alternate;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .go-to-music:hover { transform: scale(1.1); }
+
+        @keyframes flussoColoriTesto {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        @keyframes pulsazioneNeon {
+            0% { filter: drop-shadow(0 0 6px rgba(0, 255, 255, 0.6)) drop-shadow(0 0 15px rgba(255, 0, 128, 0.4)); }
+            100% { filter: drop-shadow(0 0 12px rgba(0, 255, 255, 0.9)) drop-shadow(0 0 30px rgba(255, 0, 128, 0.7)); }
+        }
+
+        /* Responsive Mobile */
+        @media (max-width: 768px) {
+            .centro-layout { margin-top: 70px; }
+            .marquee-text { font-size: 20px; }
+            .rettangolo { width: 130px; height: 260px; }
+            .rettangolo-wrapper { width: 130px; height: 260px; }
+            .marquee-wrapper { width: 130px; margin-bottom: 15px; }
+            @keyframes scorrimentoASinistra {
+                0% { transform: translate3d(130px, 0, 0); }
+                100% { transform: translate3d(-100%, 0, 0); }
+            }
+            .go-to-music { font-size: 26px; letter-spacing: 2px; }
+            .container { padding: 0 5%; }
+            body { padding: 15px 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="particleCanvas"></canvas>
+
+    <div class="centro-layout">
+        <div class="container">
+            
+            <div class="rettangolo-wrapper">
+                <div class="marquee-wrapper">
+                    <span class="marquee-text" id="orologio-scorrevole">Caricamento...</span>
+                </div>
+                <div class="rettangolo" id="rettangolo-sx">
+                    <img id="gif-dinamica" src="" alt="GIF Fascia Oraria">
+                </div>
+            </div>
+            
+            <div class="rettangolo" id="rettangolo-dx">
+                <video id="video-dinamico" autoplay muted loop playsinline src=""></video>
+            </div>
+            
+        </div>
+    </div>
+
+    <div class="music-link-container">
+        <a href="#" class="go-to-music">Go To Music</a>
+    </div>
+
+    <script>
+        /* 1. ANIMAZIONE PARTICELLE RGB DI SFONDO */
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const numParticles = 60;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.7;
+                this.speedY = (Math.random() - 0.5) * 0.7;
+                this.hue = Math.random() * 360;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.hue += 0.5;
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+            }
+            draw() {
+                ctx.fillStyle = `hsla(${this.hue}, 100%, 65%, 0.7)`;
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = `hsl(${this.hue}, 100%, 65%)`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        for (let i = 0; i < numParticles; i++) {
+            particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        /* 2. LOGICA FASCE ORARIE, OROLOGIO E MEDIA DINAMICI */
+        function aggiornaTutto() {
+            const oraAttuale = new Date();
+            const ore = oraAttuale.getHours();
+            const minuti = String(oraAttuale.getMinutes()).padStart(2, '0');
+            const secondi = String(oraAttuale.getSeconds()).padStart(2, '0');
+            
+            // Saluto testuale dinamico
+            let saludo = "Buona Sera";
+            if (ore >= 5 && ore < 13) saludo = "Buon Giorno";
+            else if (ore >= 13 && ore < 18) saludo = "Buon Pomeriggio";
+
+            const opzioniData = { day: 'numeric', month: 'long', year: 'numeric' };
+            let dataItaliano = oraAttuale.toLocaleDateString('it-IT', opzioniData);
+            dataItaliano = dataItaliano.replace(/(\s[a-z])/g, (match) => match.toUpperCase());
+
+            const elementoOrologio = document.getElementById('orologio-scorrevole');
+            if (elementoOrologio) {
+                elementoOrologio.innerText = `${saludo}! — Ore ${ore}:${minuti}:${secondi} — ${dataItaliano}`;
+            }
+
+            // DX: 4 video differenti per 4 fasce orarie
+            const videoElement = document.getElementById('video-dinamico');
+            if (videoElement) {
+                let videoSrc = "https://jaguaronero.github.io/hearts/30.mp4"; // Notte (00:00 - 05:59)
+                if (ore >= 6 && ore < 12) videoSrc = "https://jaguaronero.github.io/hearts/34.mp4";       // Mattina
+                else if (ore >= 12 && ore < 18) videoSrc = "https://jaguaronero.github.io/hearts/jadj18.mp4
+";  // Pomeriggio
+                else if (ore >= 18 && ore < 24) videoSrc = "https://jaguaronero.github.io/hearts/30.mp4";  // Sera
+
+                if (!videoElement.src.includes(videoSrc)) {
+                    videoElement.src = videoSrc;
+                }
+            }
+
+            // SX: 3 GIF differenti per 3 fasce orarie
+            const gifElement = document.getElementById('gif-dinamica');
+            if (gifElement) {
+                let gifSrc = "https://xatimg.com/image/SZb3pwtVs3d7.gif"; // Notte/Tarda sera (22:00 - 05:59)
+                if (ore >= 6 && ore < 14) gifSrc = "https://xatimg.com/image/TyDAZUZ4LpEe.gif";       // Mattina/Pranzo
+                else if (ore >= 14 && ore < 22) gifSrc = "https://xatimg.com/image/HmhSLtYZh9fC.gif";  // Pomeriggio/Sera
+
+                if (!gifElement.src.includes(gifSrc)) {
+                    gifElement.src = gifSrc;
+                }
+            }
+        }
+
+        aggiornaTutto();
+        setInterval(aggiornaTutto, 1000);
+    </script>
+</body>
+</html>
