@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Full Screen Video</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #000;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    .video-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Cambia in 'contain' se vuoi vedere il video intero senza ritagli */
+      cursor: pointer;
+    }
+
+    .btn-fullscreen {
+      position: absolute;
+      bottom: 24px;
+      right: 24px;
+      background: rgba(0, 0, 0, 0.6);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      transition: background 0.2s, transform 0.1s;
+      z-index: 10;
+    }
+
+    .btn-fullscreen:hover {
+      background: rgba(0, 0, 0, 0.85);
+      transform: scale(1.03);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="video-container" id="videoContainer">
+    <video id="myVideo" autoplay loop muted playsinline>
+      <source src="https://i.imgur.com/Xi8yd4v.mp4" type="video/mp4">
+      Il tuo browser non supporta la riproduzione video.
+    </video>
+
+    <button class="btn-fullscreen" id="fsBtn">Schermo Intero ⛶</button>
+  </div>
+
+  <script>
+    const container = document.getElementById('videoContainer');
+    const video = document.getElementById('myVideo');
+    const fsBtn = document.getElementById('fsBtn');
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        if (container.requestFullscreen) {
+          container.requestFullscreen();
+        } else if (container.webkitRequestFullscreen) { /* Safari / iOS */
+          container.webkitRequestFullscreen();
+        } else if (container.msRequestFullscreen) { /* IE11 */
+          container.msRequestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+      }
+    }
+
+    // Attiva/disattiva schermo intero tramite pulsante
+    fsBtn.addEventListener('click', toggleFullScreen);
+
+    // Cliccando sul video si riproduce audio e va a schermo intero
+    video.addEventListener('click', () => {
+      video.muted = false;
+      toggleFullScreen();
+    });
+  </script>
+
+</body>
+</html>
