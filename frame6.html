@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equalizzatore Go To Music 400px</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #07070b; /* Sfondo scuro di prova per far risaltare il neon */
+            height: 100vh;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+            box-sizing: border-box;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Container principale 400x400 con sfondo trasparente */
+        .eq-container {
+            width: 400px;
+            height: 400px;
+            background: transparent;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Wrapper centrale dell'equalizzatore */
+        .scifi-eq-wrapper {
+            position: relative;
+            width: 360px;
+            height: 360px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Anello esterno con arcobaleno animato infinito e rotazione oraria */
+        .tech-ring-outer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2.5px dashed;
+            border-radius: 50%;
+            animation: spinClockwise 25s linear infinite, rainbowColor 8s linear infinite;
+        }
+
+        /* Anello medio con arcobaleno animato infinito e rotazione antioraria */
+        .tech-ring-inner {
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            border: 2.5px dotted;
+            border-radius: 50%;
+            animation: spinCounter 18s linear infinite, rainbowColor 8s linear infinite reverse;
+        }
+
+        /* Pulsante centrale "Go To Music" / Nucleo olografico interattivo */
+        .holo-core {
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.35) 0%, rgba(255, 0, 128, 0.25) 70%, transparent 100%);
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.5), inset 0 0 20px rgba(255, 0, 128, 0.6);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(0, 242, 254, 0.8);
+            transition: all 0.3s ease;
+            animation: pulseCore 2.5s ease-in-out infinite alternate;
+            z-index: 10;
+            outline: none;
+            user-select: none;
+        }
+
+        .holo-core:hover {
+            transform: scale(1.08);
+            box-shadow: 0 0 40px rgba(0, 242, 254, 0.8), inset 0 0 25px rgba(255, 0, 128, 0.9);
+            border-color: rgba(0, 242, 254, 0.8);
+        }
+
+        .holo-core:active {
+            transform: scale(0.95);
+        }
+
+        .btn-title {
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .btn-status {
+            font-size: 20px;
+            margin-top: 2px;
+        }
+
+        /* Stato attivo (Riproduzione in corso) */
+        .holo-core.playing {
+            background: radial-gradient(circle, rgba(0, 255, 128, 0.45) 0%, rgba(0, 242, 254, 0.3) 70%, transparent 100%);
+            box-shadow: 0 0 45px rgba(0, 255, 128, 0.7), inset 0 0 25px rgba(0, 242, 254, 0.8);
+            border-color: rgba(0, 255, 128, 0.6);
+            animation: pulsePlaying 1s ease-in-out infinite alternate;
+        }
+
+        /* Singolo nodo/barra dello spettro circolare */
+        .spectrum-node {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            width: 4px;
+            height: 110px;
+            transform-origin: bottom center;
+            border-radius: 4px;
+            animation: scifiWave 1.6s ease-in-out infinite alternate;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        /* Animazioni di rotazione */
+        @keyframes spinClockwise {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes spinCounter {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-360deg); }
+        }
+
+        /* Animazione Rainbow Infinita per i cerchi esterni */
+        @keyframes rainbowColor {
+            0% {
+                border-color: hsl(0, 100%, 55%);
+                box-shadow: 0 0 20px hsl(0, 100%, 55%), inset 0 0 15px hsl(0, 100%, 55%);
+            }
+            16% {
+                border-color: hsl(60, 100%, 55%);
+                box-shadow: 0 0 20px hsl(60, 100%, 55%), inset 0 0 15px hsl(60, 100%, 55%);
+            }
+            33% {
+                border-color: hsl(120, 100%, 55%);
+                box-shadow: 0 0 20px hsl(120, 100%, 55%), inset 0 0 15px hsl(120, 100%, 55%);
+            }
+            50% {
+                border-color: hsl(180, 100%, 55%);
+                box-shadow: 0 0 20px hsl(180, 100%, 55%), inset 0 0 15px hsl(180, 100%, 55%);
+            }
+            66% {
+                border-color: hsl(240, 100%, 55%);
+                box-shadow: 0 0 20px hsl(240, 100%, 55%), inset 0 0 15px hsl(240, 100%, 55%);
+            }
+            83% {
+                border-color: hsl(300, 100%, 55%);
+                box-shadow: 0 0 20px hsl(300, 100%, 55%), inset 0 0 15px hsl(300, 100%, 55%);
+            }
+            100% {
+                border-color: hsl(360, 100%, 55%);
+                box-shadow: 0 0 20px hsl(360, 100%, 55%), inset 0 0 15px hsl(360, 100%, 55%);
+            }
+        }
+
+        @keyframes pulseCore {
+            0% { transform: scale(0.9); opacity: 0.7; }
+            100% { transform: scale(1.05); opacity: 1; }
+        }
+
+        @keyframes pulsePlaying {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            100% { transform: scale(1.12); opacity: 1; }
+        }
+
+        @keyframes scifiWave {
+            0% {
+                transform: translate(-50%, 0) rotate(var(--angle)) scaleY(0.25);
+                filter: brightness(0.5);
+            }
+            50% {
+                transform: translate(-50%, 0) rotate(var(--angle)) scaleY(1.4);
+                filter: brightness(1.5);
+            }
+            100% {
+                transform: translate(-50%, 0) rotate(var(--angle)) scaleY(0.6);
+                filter: brightness(0.9);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Container Sinistro 400x400 -->
+    <div class="eq-container" id="eq-left"></div>
+
+    <!-- Container Destro 400x400 -->
+    <div class="eq-container" id="eq-right"></div>
+
+    <!-- Elemento Audio dello Streaming -->
+    <audio id="radioStream" preload="none">
+        <source src="https://sp4.server89.com:7027/stream" type="audio/mpeg">
+        Il tuo browser non supporta l'elemento audio.
+    </audio>
+
+    <script>
+        const audioStream = document.getElementById('radioStream');
+
+        function createRainbowSciFiEqualizer(containerId) {
+            const container = document.getElementById(containerId);
+            const wrapper = document.createElement('div');
+            wrapper.className = 'scifi-eq-wrapper';
+
+            const outerRing = document.createElement('div');
+            outerRing.className = 'tech-ring-outer';
+            const innerRing = document.createElement('div');
+            innerRing.className = 'tech-ring-inner';
+            
+            // Pulsante centrale interattivo "Go To Music"
+            const coreBtn = document.createElement('button');
+            coreBtn.className = 'holo-core';
+            coreBtn.innerHTML = `
+                <span class="btn-title">Go To Music</span>
+                <span class="btn-status">▶</span>
+            `;
+
+            // Gestione del Play / Pause collegato allo stream
+            coreBtn.addEventListener('click', () => {
+                if (audioStream.paused) {
+                    audioStream.play().then(() => {
+                        updateAllButtonsState(true);
+                    }).catch(err => {
+                        console.error("Errore nella riproduzione dello stream:", err);
+                    });
+                } else {
+                    audioStream.pause();
+                    updateAllButtonsState(false);
+                }
+            });
+
+            wrapper.appendChild(outerRing);
+            wrapper.appendChild(innerRing);
+            wrapper.appendChild(coreBtn);
+
+            // Generazione delle barre dello spettro circolare
+            const nodeCount = 36;
+            for (let i = 0; i < nodeCount; i++) {
+                const node = document.createElement('div');
+                node.className = 'spectrum-node';
+
+                const angle = (i * 360) / nodeCount;
+                const hue = (i * (360 / nodeCount)) % 360;
+
+                node.style.setProperty('--angle', `${angle}deg`);
+                node.style.background = `linear-gradient(to top, hsl(${hue}, 100%, 50%), hsl(${(hue + 90) % 360}, 100%, 70%))`;
+                node.style.color = `hsl(${hue}, 100%, 60%)`;
+                node.style.animationDelay = `${(i * 0.05) % 1.6}s`;
+
+                wrapper.appendChild(node);
+            }
+
+            container.appendChild(wrapper);
+        }
+
+        // Funzione per sincronizzare lo stato visivo di entrambi i pulsanti (destra e sinistra)
+        function updateAllButtonsState(isPlaying) {
+            const buttons = document.querySelectorAll('.holo-core');
+            buttons.forEach(btn => {
+                const statusSpan = btn.querySelector('.btn-status');
+                if (isPlaying) {
+                    btn.classList.add('playing');
+                    statusSpan.textContent = '⏸';
+                } else {
+                    btn.classList.remove('playing');
+                    statusSpan.textContent = '▶';
+                }
+            });
+        }
+
+        // Eventi nativi dell'audio per sicurezza
+        audioStream.addEventListener('play', () => updateAllButtonsState(true));
+        audioStream.addEventListener('pause', () => updateAllButtonsState(false));
+
+        // Genera entrambi gli equalizzatori nei container da 400px
+        createRainbowSciFiEqualizer('eq-left');
+        createRainbowSciFiEqualizer('eq-right');
+    </script>
+
+</body>
+</html>
