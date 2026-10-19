@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equalizzatori Go To Music & Mille Ricordi - Sfondo Trasparente</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: transparent !important;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+            box-sizing: border-box;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Container principale per ogni lato (colonna con controlli sopra e equalizzatore sotto) */
+        .side-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        /* Area superiore per pulsanti o data/orario */
+        .controls-top {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        /* Pulsanti Stream con sfumature */
+        .stream-btn {
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #ff007f 100%);
+            background-size: 200% 200%;
+            border: none;
+            border-radius: 30px;
+            padding: 10px 22px;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            outline: none;
+            user-select: none;
+            animation: gradientShift 6s ease infinite;
+        }
+
+        .stream-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 0, 128, 0.7);
+        }
+
+        .stream-btn:active {
+            transform: scale(0.95);
+        }
+
+        .stream-btn.playing {
+            background: linear-gradient(135deg, #00ff80 0%, #00f2fe 100%);
+            box-shadow: 0 0 30px rgba(0, 255, 128, 0.7);
+        }
+
+        /* Display Data e Orario con Sfumatura Testo */
+        #datetime-display {
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 1.3;
+            background: linear-gradient(135deg, #00f2fe, #ff007f, #ffe600);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+            text-transform: capitalize;
+            letter-spacing: 0.5px;
+        }
+
+        /* Container principale dell'equalizzatore 400x400 */
+        .eq-container {
+            width: 400px;
+            height: 400px;
+            background: transparent;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Wrapper centrale dell'equalizzatore */
+        .scifi-eq-wrapper {
+            position: relative;
+            width: 360px;
+            height: 360px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Anello esterno con arcobaleno animato infinito e rotazione oraria */
+        .tech-ring-outer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2.5px dashed;
+            border-radius: 50%;
+            animation: spinClockwise 25s linear infinite, rainbowColor 8s linear infinite;
+        }
+
+        /* Anello medio con arcobaleno animato infinito e rotazione antioraria */
+        .tech-ring-inner {
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            border: 2.5px dotted;
+            border-radius: 50%;
+            animation: spinCounter 18s linear infinite, rainbowColor 8s linear infinite reverse;
+        }
+
+        /* Nucleo centrale statico (senza interazione stream) */
+        .holo-core {
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.35) 0%, rgba(255, 0, 128, 0.25) 70%, transparent 100%);
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.5), inset 0 0 20px rgba(255, 0, 128, 0.6);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(0, 242, 254, 0.8);
+            animation: pulseCore 2.5s ease-in-out infinite alternate;
+            z-index: 10;
+            user-select: none;
+        }
+
+        .btn-title {
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .btn-status {
+            font-size: 16px;
+            margin-top: 2px;
+        }
+
+        /* Singolo nodo/barra dello spettro circolare */
+        .spectrum-node {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            width: 4px;
+            height: 110px;
+            transform-origin: bottom center;
+            border-radius: 4px;
+            animation: scifiWave 1.6s ease-in-out infinite alternate;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        /* Animazioni */
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes spinClockwise {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes spinCounter {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-360deg); }
+        }
+
+        @keyframes rainbowColor {
+            0% {
+                border-color: hsl(0, 100%, 55%);
+                box-shadow: 0 0 20px hsl(0, 100%, 55%), inset 0 0 15px hsl(0, 100%, 55%);
+            }
+            16% {
+                border-color: hsl(60, 100%, 55%);
+                box-shadow: 0 0 20px hsl(60, 100%, 55%), inset 0 0 15px hsl(60, 100%, 55%);
+            }
+            33% {
+                border-color: hsl(120, 100%, 55%);
+                box-shadow: 0 0 20px hsl(120, 100%, 55%), inset 0 0 15px hsl(120, 100%, 55%);
+            }
+            50% {
+                border-color: hsl(180, 100%, 55%);
+                box-shadow: 0 0 20px hsl(180, 100%, 55%), inset 0 0 15px hsl(180, 100%, 55%);
+            }
+            66% {
+                border-color: hsl(240, 100%, 55%);
+                box-shadow: 0 0 20px hsl(240, 100%, 55%), inset 0 0 15px hsl(240, 100%, 55%);
+            }
+            83% {
+                border-color: hsl(300, 100%, 55%);
+                box-shadow: 0 0 20px hsl(300, 100%, 55%), inset 0 0 15px hsl(300, 100%, 55%);
+            }
+            100% {
+                border-color: hsl(360, 100%, 55%);
+                box-shadow: 0 0 20px hsl(360, 100%, 55%), inset 0 0 15px hsl(360, 100%, 55%);
+            }
+        }
+
+        @keyframes pulseCore {
+            0% { transform: scale(0.9); opacity: 0.7; }
+            100% { transform: scale(1.05); opacity: 1; }
+        }
+
+        @keyframes scifiWave {
+            0% {
+                transform: translate(-50%, 0) rotate(var(--angle)) scaleY(0.25);
+                filter: brightness(0.5);
+            }
+            50% {
+                transform: translate(-50%, 0) rotate(var(--angle)) scaleY(1.4);
+                filter: brightness(1.5);
+            }
+            100% {
+                transform: translate(-50%, 0) rotate(var(--angle)) scaleY(0.6);
+                filter: brightness(0.9);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Lato Sinistro: Pulsanti Stream + Equalizzatore -->
+    <div class="side-container">
+        <div class="controls-top">
+            <button class="stream-btn" id="btnGoToMusic">
+                <span>Go To Music</span>
+                <span class="stream-status-icon">▶</span>
+            </button>
+            <button class="stream-btn" id="btnMilleRicordi">
+                <span>Mille Ricordi</span>
+                <span class="stream-status-icon">▶</span>
+            </button>
+        </div>
+        <div class="eq-container" id="eq-left"></div>
+    </div>
+
+    <!-- Lato Destro: Data e Orario + Equalizzatore -->
+    <div class="side-container">
+        <div class="controls-top">
+            <div id="datetime-display">Caricamento data...</div>
+        </div>
+        <div class="eq-container" id="eq-right"></div>
+    </div>
+
+    <!-- Elemento Audio dello Streaming -->
+    <audio id="radioStream" preload="none">
+        <source src="https://sp4.server89.com:7027/stream" type="audio/mpeg">
+        Il tuo browser non supporta l'elemento audio.
+    </audio>
+
+    <script>
+        const audioStream = document.getElementById('radioStream');
+        const btnGoToMusic = document.getElementById('btnGoToMusic');
+        const btnMilleRicordi = document.getElementById('btnMilleRicordi');
+        const streamButtons = [btnGoToMusic, btnMilleRicordi];
+
+        // Funzione per generare l'equalizzatore sci-fi (senza interazione sul nucleo centrale)
+        function createRainbowSciFiEqualizer(containerId) {
+            const container = document.getElementById(containerId);
+            const wrapper = document.createElement('div');
+            wrapper.className = 'scifi-eq-wrapper';
+
+            const outerRing = document.createElement('div');
+            outerRing.className = 'tech-ring-outer';
+            const innerRing = document.createElement('div');
+            innerRing.className = 'tech-ring-inner';
+            
+            // Nucleo centrale decorativo
+            const coreDiv = document.createElement('div');
+            coreDiv.className = 'holo-core';
+            coreDiv.innerHTML = `
+                <span class="btn-title">SYSTEM</span>
+                <span class="btn-status">ONLINE</span>
+            `;
+
+            wrapper.appendChild(outerRing);
+            wrapper.appendChild(innerRing);
+            wrapper.appendChild(coreDiv);
+
+            // Generazione delle barre dello spettro circolare
+            const nodeCount = 36;
+            for (let i = 0; i < nodeCount; i++) {
+                const node = document.createElement('div');
+                node.className = 'spectrum-node';
+
+                const angle = (i * 360) / nodeCount;
+                const hue = (i * (360 / nodeCount)) % 360;
+
+                node.style.setProperty('--angle', `${angle}deg`);
+                node.style.background = `linear-gradient(to top, hsl(${hue}, 100%, 50%), hsl(${(hue + 90) % 360}, 100%, 70%))`;
+                node.style.color = `hsl(${hue}, 100%, 60%)`;
+                node.style.animationDelay = `${(i * 0.05) % 1.6}s`;
+
+                wrapper.appendChild(node);
+            }
+
+            container.appendChild(wrapper);
+        }
+
+        // Gestione Play / Pause condivisa tra i due pulsanti stream
+        function toggleStream() {
+            if (audioStream.paused) {
+                audioStream.play().then(() => {
+                    updateStreamButtonsState(true);
+                }).catch(err => {
+                    console.error("Errore nella riproduzione dello stream:", err);
+                });
+            } else {
+                audioStream.pause();
+                updateStreamButtonsState(false);
+            }
+        }
+
+        btnGoToMusic.addEventListener('click', toggleStream);
+        btnMilleRicordi.addEventListener('click', toggleStream);
+
+        // Aggiorna lo stato visivo di entrambi i pulsanti di stream
+        function updateStreamButtonsState(isPlaying) {
+            streamButtons.forEach(btn => {
+                const statusIcon = btn.querySelector('.stream-status-icon');
+                if (isPlaying) {
+                    btn.classList.add('playing');
+                    statusIcon.textContent = '⏸';
+                } else {
+                    btn.classList.remove('playing');
+                    statusIcon.textContent = '▶';
+                }
+            });
+        }
+
+        audioStream.addEventListener('play', () => updateStreamButtonsState(true));
+        audioStream.addEventListener('pause', () => updateStreamButtonsState(false));
+
+        // Funzione per aggiornare Data e Orario in formato italiano
+        function updateDateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateStr = now.toLocaleDateString('it-IT', options);
+            const timeStr = now.toLocaleTimeString('it-IT');
+            document.getElementById('datetime-display').innerHTML = `${dateStr}<br>${timeStr}`;
+        }
+
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        // Genera entrambi gli equalizzatori
+        createRainbowSciFiEqualizer('eq-left');
+        createRainbowSciFiEqualizer('eq-right');
+    </script>
+
+</body>
+</html>
