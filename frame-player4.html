@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Player Web Streaming & Equalizzatore Arcobaleno</title>
+  <style>
+    /* Reset & Sfondo Trasparente */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: transparent !important;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+      color: #fff;
+    }
+
+    /* Layout Principale */
+    .app-container {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+    }
+
+    /* Sezione Sinistra - Pulsanti Stazioni in alto a sinistra */
+    .left-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      max-width: 50%;
+      height: 100%;
+      padding-top: 20px;
+    }
+
+    /* Contenitore Pulsanti Stazioni */
+    .buttons-row {
+      display: flex;
+      flex-direction: row;
+      gap: 15px;
+      justify-content: flex-start;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    /* Controlli Pausa & Volume - Posizionati in alto a destra */
+    .top-right-controls {
+      position: absolute;
+      top: 20px;
+      right: 40px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      z-index: 10;
+    }
+
+    /* Stile Pulsanti e Contenitori Arcobaleno Animato Infinito */
+    .rainbow-btn {
+      position: relative;
+      border: none;
+      outline: none;
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: 700;
+      padding: 16px 32px;
+      border-radius: 50px;
+      cursor: pointer;
+      background: linear-gradient(
+        124deg,
+        #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bfd, #7a00ff, #ff00c8, #ff0000
+      );
+      background-size: 800% 800%;
+      animation: rainbowGlow 10s linear infinite;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+    }
+
+    .rainbow-btn:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+    }
+
+    .rainbow-btn:active {
+      transform: translateY(1px) scale(0.98);
+    }
+
+    /* Stato Attivo Pulsante */
+    .rainbow-btn.active {
+      outline: 3px solid #fff;
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+    }
+
+    /* Contenitore Volume Arcobaleno Animato Infinito */
+    .rainbow-volume-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      border-radius: 50px;
+      background: linear-gradient(
+        124deg,
+        #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bfd, #7a00ff, #ff00c8, #ff0000
+      );
+      background-size: 800% 800%;
+      animation: rainbowGlow 10s linear infinite;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .rainbow-volume-container label {
+      font-size: 18px;
+      user-select: none;
+      cursor: pointer;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+    }
+
+    .volume-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100px;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.6);
+      outline: none;
+      cursor: pointer;
+    }
+
+    .volume-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #fff;
+      cursor: pointer;
+      box-shadow: 0 0 6px rgba(0,0,0,0.6);
+    }
+
+    .volume-slider::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #fff;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 0 6px rgba(0,0,0,0.6);
+    }
+
+    .volume-percent {
+      font-size: 14px;
+      font-weight: 700;
+      min-width: 38px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+    }
+
+    @keyframes rainbowGlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Scritta di Stato sotto i pulsanti a sinistra */
+    .status-text {
+      margin-top: 25px;
+      font-size: 22px;
+      font-weight: 800;
+      min-height: 32px;
+      text-align: left;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+      background: linear-gradient(90deg, #ff007f, #00f0ff, #7000ff, #ff007f);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: rainbowGlow 6s linear infinite;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .status-text.visible {
+      opacity: 1;
+    }
+
+    /* Sezione Destra - Equalizzatore */
+    .right-section {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 50%;
+      height: 100%;
+    }
+
+    canvas {
+      width: 100%;
+      max-width: 500px;
+      height: auto;
+      aspect-ratio: 1 / 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Controlli Pausa & Volume in alto a destra -->
+  <div class="top-right-controls">
+    <button class="rainbow-btn" id="btnStop">Pausa</button>
+    <div class="rainbow-volume-container">
+      <label for="volumeControl" id="volumeIcon">🔊</label>
+      <input type="range" id="volumeControl" class="volume-slider" min="0" max="1" step="0.01" value="1">
+      <span class="volume-percent" id="volumePercent">100%</span>
+    </div>
+  </div>
+
+  <div class="app-container">
+    <!-- Sezione Sinistra: Pulsanti Stazioni in alto a sinistra -->
+    <div class="left-section">
+      <div class="buttons-row">
+        <button class="rainbow-btn" id="btnGoToMusic">Go To Music</button>
+        <button class="rainbow-btn" id="btnMilleRicordi">Mille Ricordi</button>
+      </div>
+      
+      <div class="status-text" id="statusText"></div>
+    </div>
+
+    <!-- Sezione Destra: Equalizzatore Arcobaleno Rotante/Ondeggiante -->
+    <div class="right-section">
+      <canvas id="equalizerCanvas" width="500" height="500"></canvas>
+    </div>
+  </div>
+
+  <!-- Audio Element -->
+  <audio id="audioPlayer" crossorigin="anonymous"></audio>
+
+  <script>
+    // Stream URLs
+    const STREAM_GO_TO_MUSIC = "https://sp4.server89.com:7027/stream";
+    const STREAM_MILLE_RICORDI = "https://node-14.zeno.fm/xh0txuqr0v8uv?zs=KULRBS6sQcGK70KY33r7IQ&rj-tok=AAABgDktPVMA09m2cc37_h6yBA&rj-ttl=5";
+
+    // Elementi DOM
+    const audio = document.getElementById('audioPlayer');
+    const btnGoToMusic = document.getElementById('btnGoToMusic');
+    const btnMilleRicordi = document.getElementById('btnMilleRicordi');
+    const btnStop = document.getElementById('btnStop');
+    const volumeControl = document.getElementById('volumeControl');
+    const volumeIcon = document.getElementById('volumeIcon');
+    const volumePercent = document.getElementById('volumePercent');
+    const statusText = document.getElementById('statusText');
+    const canvas = document.getElementById('equalizerCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let audioCtx, analyser, dataArray;
+    let currentStream = "";
+    let currentStreamName = "";
+    let previousVolume = 1;
+
+    // Inizializzazione Web Audio API
+    function initAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 128;
+        const source = audioCtx.createMediaElementSource(audio);
+        source.connect(analyser);
+        analyser.connect(audioCtx.destination);
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    // Gestione Riproduzione Stream
+    function playStream(url, name, activeBtn, inactiveBtn) {
+      initAudioContext();
+
+      // Se lo stesso stream è già in riproduzione, non riavviare
+      if (currentStream === url && !audio.paused) {
+        return;
+      }
+
+      // Se lo stesso stream era in pausa, riprendi
+      if (currentStream === url && audio.paused) {
+        audio.play().then(() => {
+          btnStop.textContent = "Pausa";
+          activeBtn.classList.add('active');
+          statusText.textContent = `Stai ascoltando ${name}`;
+          statusText.classList.add('visible');
+        }).catch(e => console.log("Riproduzione interrotta:", e));
+        return;
+      }
+
+      currentStream = url;
+      currentStreamName = name;
+      audio.src = url;
+      audio.play().catch(e => console.log("Riproduzione interrotta o bloccata:", e));
+
+      // Gestione Grafica Pulsanti
+      activeBtn.classList.add('active');
+      inactiveBtn.classList.remove('active');
+      btnStop.textContent = "Pausa";
+
+      // Gestione Scritta Stato
+      statusText.textContent = `Stai ascoltando ${name}`;
+      statusText.classList.add('visible');
+    }
+
+    // Event Listeners Stazioni
+    btnGoToMusic.addEventListener('click', () => {
+      playStream(STREAM_GO_TO_MUSIC, "Go To Music", btnGoToMusic, btnMilleRicordi);
+    });
+
+    btnMilleRicordi.addEventListener('click', () => {
+      playStream(STREAM_MILLE_RICORDI, "Mille Ricordi", btnMilleRicordi, btnGoToMusic);
+    });
+
+    // Pulsante Pausa / Riprendi
+    btnStop.addEventListener('click', () => {
+      if (!audio.paused && currentStream !== "") {
+        audio.pause();
+        btnStop.textContent = "Riprendi";
+        statusText.textContent = `In pausa: ${currentStreamName}`;
+      } else if (audio.paused && currentStream !== "") {
+        audio.play();
+        btnStop.textContent = "Pausa";
+        statusText.textContent = `Stai ascoltando ${currentStreamName}`;
+      }
+    });
+
+    // Aggiornamento grafica Volume
+    function updateVolumeUI(val) {
+      volumeControl.value = val;
+      volumePercent.textContent = Math.round(val * 100) + "%";
+      if (val === 0) {
+        volumeIcon.textContent = "🔇";
+      } else if (val < 0.5) {
+        volumeIcon.textContent = "🔉";
+      } else {
+        volumeIcon.textContent = "🔊";
+      }
+    }
+
+    // Slider Volume
+    volumeControl.addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value);
+      audio.volume = val;
+      updateVolumeUI(val);
+    });
+
+    // Click sull'icona volume per Mute/Unmute
+    volumeIcon.addEventListener('click', () => {
+      if (audio.volume > 0) {
+        previousVolume = audio.volume;
+        audio.volume = 0;
+        updateVolumeUI(0);
+      } else {
+        audio.volume = previousVolume || 1;
+        updateVolumeUI(audio.volume);
+      }
+    });
+
+    // Animate Canvas Equalizer (Onde Arcobaleno Rotanti)
+    let rotationAngle = 0;
+    let waveOffset = 0;
+
+    function drawEqualizer() {
+      requestAnimationFrame(drawEqualizer);
+
+      // Pulisci Canvas lasciando lo sfondo trasparente
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const baseRadius = 80;
+      const numLines = 64;
+
+      if (analyser && !audio.paused) {
+        analyser.getByteFrequencyData(dataArray);
+      } else {
+        // Modalità idle con leggero ondeggiamento simulato
+        if (!dataArray) dataArray = new Uint8Array(64);
+        for (let i = 0; i < 64; i++) {
+          dataArray[i] = Math.sin(waveOffset + i * 0.2) * 15 + 20;
+        }
+      }
+
+      rotationAngle += 0.008; // Velocità di rotazione
+      waveOffset += 0.05;    // Velocità dell'onda
+
+      for (let i = 0; i < numLines; i++) {
+        const angle = (i / numLines) * Math.PI * 2 + rotationAngle;
+        
+        // Calcola l'altezza della linea in base alla frequenza/onda
+        const val = dataArray[i % dataArray.length] || 10;
+        const lineLength = (val / 255) * 110 + Math.sin(waveOffset + i * 0.3) * 10 + 10;
+
+        // Coordinate di partenza (cerchio interno)
+        const x1 = centerX + Math.cos(angle) * baseRadius;
+        const y1 = centerY + Math.sin(angle) * baseRadius;
+
+        // Coordinate di arrivo (verso l'esterno con effetto ondeggiante)
+        const waveX = Math.cos(angle + Math.sin(waveOffset + i) * 0.1);
+        const waveY = Math.sin(angle + Math.sin(waveOffset + i) * 0.1);
+        const x2 = centerX + waveX * (baseRadius + lineLength);
+        const y2 = centerY + waveY * (baseRadius + lineLength);
+
+        // Colore Arcobaleno Dinamico in base all'angolo
+        const hue = (i / numLines * 360 + rotationAngle * 100) % 360;
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = `hsl(${hue}, 100%, 60%)`;
+        ctx.lineCap = 'round';
+        ctx.shadowBlur = 12;
+        ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
+        ctx.stroke();
+      }
+    }
+
+    // Avvia l'animazione dell'equalizzatore
+    drawEqualizer();
+  </script>
+</body>
+</html>
